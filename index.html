@@ -405,7 +405,7 @@ function ResumeTab({ profile, setProfile, toast, goTracker }) {
   );
 }
 
-function Tracker({ items, setItems, openAdd, profile, goResume }) {
+function Tracker({ items, setItems, openAdd, profile, goResume, contacts }) {
   const [q, setQ] = useState("");
   const [type, setType] = useState("All");
   const [flags, setFlags] = useState({ remote: false, match: false });
@@ -493,6 +493,7 @@ function Tracker({ items, setItems, openAdd, profile, goResume }) {
                       <div className="title">{i.title}</div>
                       <div className="org">{i.org} · via {i.source}</div>
                       {i.m && i.m.hits.length > 0 && <div className="why">Matches your: {i.m.hits.join(", ")}</div>}
+                      {contacts.filter((c) => c.links.includes(i.id)).length > 0 && <div className="why" style={{ color: "var(--blue)" }}>👤 You know: {contacts.filter((c) => c.links.includes(i.id)).map((c) => c.name).join(", ")}</div>}
                     </td>
                     <td><span className={"pill " + i.type}>{i.type}</span></td>
                     <td><span className="tag">{i.remote ? "Remote" : i.location}</span>{i.dist != null && <div className="org">{i.dist} mi away</div>}</td>
@@ -509,6 +510,101 @@ function Tracker({ items, setItems, openAdd, profile, goResume }) {
             </tbody>
           </table>
         )}
+      </div>
+    </>
+  );
+}
+
+const AFFILIATES = [
+  { id: 1, name: "Priya Shah", role: "Cybersecurity Team Lead", org: "Sacramento Municipal Utility District", met: "CRC Career Fair, Oct 2026", note: "Said to email her before applying. Interested in my home network lab.", links: [1] },
+  { id: 2, name: "Marcus Lee", role: "Data Analyst", org: "Kaiser Permanente", met: "LinkedIn coffee chat", note: "Offered to review my resume and give a referral.", links: [5] },
+  { id: 3, name: "Dr. Hernandez", role: "MESA Program Director", org: "Cosumnes River College", met: "MESA orientation", note: "Runs the MESA transfer scholarship committee.", links: [2] },
+  { id: 4, name: "Jordan Kim", role: "Past fellow", org: "Hack the Capital", met: "Sacramento hackathon", note: "Can share tips on the fellowship interview.", links: [3] },
+  { id: 5, name: "Ms. Patel", role: "Transfer Counselor", org: "UC Davis", met: "Transfer workshop", note: "Knows the pathway fellowship staff.", links: [6] },
+];
+
+function Affiliates({ items, contacts, setContacts, toast }) {
+  const blank = { name: "", role: "", org: "", met: "", note: "", links: [] };
+  const [adding, setAdding] = useState(false);
+  const [f, setF] = useState(blank);
+  const [q, setQ] = useState("");
+  const opp = (id) => items.find((i) => i.id === id);
+  const upd = (id, fn) => setContacts(contacts.map((c) => (c.id === id ? fn(c) : c)));
+  const toggle = (id) => setF({ ...f, links: f.links.includes(id) ? f.links.filter((x) => x !== id) : [...f.links, id] });
+  const save = () => {
+    if (!f.name.trim()) return;
+    setContacts([{ ...f, id: Date.now() }, ...contacts]);
+    toast("Saved " + f.name);
+    setF(blank); setAdding(false);
+  };
+  const shown = contacts.filter((c) => (c.name + c.org + c.role).toLowerCase().includes(q.toLowerCase()));
+
+  return (
+    <>
+      <div className="top">
+        <div><h2>Affiliates</h2><p>People you've met, linked to the opportunities they can help with.</p></div>
+        <button className="btn gold" onClick={() => setAdding(!adding)}>{adding ? "Close" : "＋ Add person"}</button>
+      </div>
+
+      {adding && (
+        <div className="item" style={{ marginBottom: 16 }}>
+          <b>New affiliate</b>
+          <div className="grid2">
+            <div><label className="f">Name</label><input className="field" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+            <div><label className="f">Role</label><input className="field" placeholder="e.g. Recruiter" value={f.role} onChange={(e) => setF({ ...f, role: e.target.value })} /></div>
+            <div><label className="f">Organization</label><input className="field" value={f.org} onChange={(e) => setF({ ...f, org: e.target.value })} /></div>
+            <div><label className="f">How you met</label><input className="field" placeholder="e.g. Career fair" value={f.met} onChange={(e) => setF({ ...f, met: e.target.value })} /></div>
+            <div style={{ gridColumn: "1 / -1" }}><label className="f">Notes</label><input className="field" value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} /></div>
+          </div>
+          <label className="f" style={{ marginTop: 14 }}>Link to opportunities</label>
+          <div className="skills">
+            {items.map((i) => (
+              <button key={i.id} className={"chip" + (f.links.includes(i.id) ? " on" : "")} onClick={() => toggle(i.id)}>{i.title}</button>
+            ))}
+          </div>
+          <div className="row end"><button className="btn ghost" onClick={() => { setAdding(false); setF(blank); }}>Cancel</button><button className="btn gold" disabled={!f.name.trim()} onClick={save}>Save person</button></div>
+        </div>
+      )}
+
+      <div className="filters"><input className="search" placeholder="Search people, companies…" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+
+      <div className="list">
+        {shown.length === 0 && <div className="card"><div className="empty">No one found.</div></div>}
+        {shown.map((c) => {
+          const free = items.filter((i) => !c.links.includes(i.id));
+          return (
+            <div className="item" key={c.id}>
+              <div className="person">
+                <div className="avatar">{c.name[0]}</div>
+                <div style={{ flex: 1 }}>
+                  <b>{c.name}</b> <span className="org">{c.role}{c.org ? " · " + c.org : ""}</span>
+                  <div className="org">Met: {c.met || "–"}</div>
+                  {c.note && <div style={{ fontSize: 14, marginTop: 6 }}>{c.note}</div>}
+                  <div className="org" style={{ margin: "12px 0 6px", fontWeight: 600 }}>Linked opportunities</div>
+                  <div className="skills">
+                    {c.links.length === 0 && <span className="org">None yet.</span>}
+                    {c.links.map((id) => {
+                      const o = opp(id); if (!o) return null;
+                      const n = daysLeft(o.deadline);
+                      return (
+                        <span key={id} className="skill">{o.title} · <span className={"due " + dueClass(n)} style={{ padding: "1px 7px", fontSize: 11 }}>{dueText(n)}</span>
+                          <button aria-label="Unlink" onClick={() => upd(c.id, (x) => ({ ...x, links: x.links.filter((l) => l !== id) }))}>×</button></span>
+                      );
+                    })}
+                  </div>
+                  <div className="row" style={{ marginTop: 12, flexWrap: "wrap" }}>
+                    <select className="status" value="" onChange={(e) => e.target.value && upd(c.id, (x) => ({ ...x, links: [...x.links, +e.target.value] }))}>
+                      <option value="">＋ Link an opportunity…</option>
+                      {free.map((i) => <option key={i.id} value={i.id}>{i.title}</option>)}
+                    </select>
+                    <button className="btn ghost small" disabled={c.links.length === 0}
+                      onClick={() => toast("✉️ Referral request to " + c.name + " drafted for “" + opp(c.links[0])?.title + "” (mock)")}>Ask for referral</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </>
   );
@@ -601,10 +697,11 @@ function App() {
   const [items, setItems] = useState(SEED);
   const [adding, setAdding] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [contacts, setContacts] = useState(AFFILIATES);
   const [msg, setMsg] = useState("");
   const toast = (m) => { setMsg(m); setTimeout(() => setMsg(""), 2600); };
   const save = (d) => { setItems([{ ...d, id: Date.now(), status: "Saved" }, ...items]); setAdding(false); toast("Saved! 5 reminders scheduled."); setTab("tracker"); };
-  const NAV = [["tracker", "📋", "Tracker", items.length], ["resume", "📄", "My resume", null], ["reminders", "⏰", "Reminders", null], ["recs", "✉️", "Recommenders", null]];
+  const NAV = [["tracker", "📋", "Tracker", items.length], ["affiliates", "🤝", "Affiliates", contacts.length], ["resume", "📄", "My resume", null], ["reminders", "⏰", "Reminders", null], ["recs", "✉️", "Recommenders", null]];
 
   return (
     <div className="app">
@@ -618,7 +715,8 @@ function App() {
         <div className="side-foot">No account or login needed. Mock prototype for CRC Hacks 2026 with sample data; Claude extraction is simulated.</div>
       </aside>
       <main className="main">
-        {tab === "tracker" && <Tracker items={items} setItems={setItems} openAdd={() => setAdding(true)} profile={profile} goResume={() => setTab("resume")} />}
+        {tab === "tracker" && <Tracker items={items} setItems={setItems} openAdd={() => setAdding(true)} profile={profile} goResume={() => setTab("resume")} contacts={contacts} />}
+        {tab === "affiliates" && <Affiliates items={items} contacts={contacts} setContacts={setContacts} toast={toast} />}
         {tab === "resume" && <ResumeTab profile={profile} setProfile={setProfile} toast={toast} goTracker={() => setTab("tracker")} />}
         {tab === "reminders" && <Reminders items={items} toast={toast} />}
         {tab === "recs" && <Recommenders items={items} toast={toast} />}
