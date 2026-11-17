@@ -1,0 +1,1548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SacPath – Mock App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<style>
+  :root {
+    /* Palette: navy, aqua, yellow, orange, coral */
+    --bg: #f3fafa;
+    --card: #ffffff;
+    --ink: #0b2548;
+    --muted: #5a6b82;
+    --line: #d6e7e9;
+    --gold: #f9a84d;
+    --gold-soft: #fdebd2;
+    --green: #0e8c92;
+    --green-soft: #daf5f5;
+    --red: #d63d2e;
+    --red-soft: #ffe8e4;
+    --blue: #0b2548;
+    --blue-soft: #e2e9f3;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'DM Sans', system-ui, sans-serif; font-size: 15px; line-height: 1.45; }
+  h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; margin: 0; letter-spacing: -0.01em; }
+  button { font: inherit; cursor: pointer; }
+  input, select, textarea { font: inherit; color: inherit; }
+
+  .app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
+  .side { background: var(--ink); color: #f4f5fa; padding: 24px 16px; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; }
+  .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--gold); color: var(--ink); display: grid; place-items: center; font-family: 'Fraunces', serif; font-weight: 700; font-size: 18px; }
+  .brand h1 { font-size: 21px; color: #fff; }
+  .nav { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 0; background: transparent; color: #d3e6ee; text-align: left; font-weight: 500; width: 100%; }
+  .nav:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .nav.on { background: var(--gold); color: var(--ink); font-weight: 700; }
+  .nav .count { margin-left: auto; font-size: 12px; background: rgba(255,255,255,0.14); padding: 1px 8px; border-radius: 99px; }
+  .nav.on .count { background: rgba(31,42,55,0.15); }
+  .side-foot { margin-top: auto; font-size: 12px; color: #8fb0c0; padding: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+  .main { padding: 28px 36px 60px; max-width: 1180px; }
+  .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+  .top h2 { font-size: 30px; }
+  .top p { margin: 4px 0 0; color: var(--muted); }
+  .btn { border: 0; background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
+  .btn:hover { background: #061a35; }
+  .btn.gold { background: var(--gold); color: var(--ink); }
+  .btn.gold:hover { background: #e8933a; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  .btn.ghost:hover { background: #fff; }
+  .btn.small { padding: 6px 12px; font-size: 13px; border-radius: 8px; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .stat { border-top: 3px solid var(--gold); box-shadow: 0 1px 3px rgba(11,37,72,0.08); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  .stat .n { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 700; }
+  .stat .l { color: var(--muted); font-size: 13px; }
+  .stat.alert .n { color: var(--red); }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .search { flex: 1; min-width: 200px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: #fff; }
+  .chip { border: 1px solid var(--line); background: #fff; padding: 7px 14px; border-radius: 99px; font-size: 13px; font-weight: 500; color: var(--ink); }
+  .chip:hover { border-color: var(--gold); }
+  .chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+  .card { box-shadow: 0 1px 3px rgba(11,37,72,0.08); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th { border-bottom: 2px solid var(--gold) !important; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); padding: 12px 16px; background: #f6fbfb; border-bottom: 1px solid var(--line); }
+  td { padding: 14px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  tr:hover td { background: #f6fcfc; }
+  .title { font-weight: 600; }
+  .org { color: var(--muted); font-size: 13px; }
+
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; }
+  .pill.Internship { background: var(--blue-soft); color: var(--blue); }
+  .pill.Scholarship { background: var(--gold-soft); color: #9a4f00; }
+  .pill.Fellowship { background: var(--green-soft); color: var(--green); }
+  .tag { display: inline-block; font-size: 12px; color: var(--muted); border: 1px solid var(--line); padding: 2px 8px; border-radius: 6px; margin-right: 4px; }
+  .due { font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 8px; display: inline-block; white-space: nowrap; }
+  .due.urgent { background: var(--red-soft); color: var(--red); }
+  .due.soon { background: var(--gold-soft); color: #9a4f00; }
+  .due.ok { background: var(--green-soft); color: var(--green); }
+  .due.past { background: #eee; color: #777; }
+  .status { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: #fff; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(20,26,36,0.5); display: grid; place-items: center; padding: 20px; z-index: 50; }
+  .modal { background: #fff; border-radius: 18px; width: min(680px, 100%); max-height: 92vh; overflow: auto; padding: 26px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); }
+  .modal h3 { font-size: 24px; margin-bottom: 4px; }
+  .tabs { display: flex; gap: 6px; margin: 16px 0 12px; }
+  .tab { border: 1px solid var(--line); background: #fff; padding: 7px 14px; border-radius: 8px; font-weight: 500; }
+  .tab.on { background: var(--gold-soft); border-color: var(--gold); font-weight: 700; }
+  textarea, .field { width: 100%; padding: 11px 13px; border: 1px solid var(--line); border-radius: 10px; background: #fafefe; }
+  textarea { min-height: 130px; resize: vertical; }
+  .drop { border: 2px dashed var(--line); border-radius: 12px; padding: 34px; text-align: center; color: var(--muted); background: #fafefe; }
+  .row { display: flex; gap: 10px; align-items: center; }
+  .row.end { justify-content: flex-end; margin-top: 18px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  label.f { display: block; font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+  .banner { background: var(--blue-soft); color: var(--blue); border-radius: 10px; padding: 9px 12px; font-size: 13px; margin-bottom: 12px; }
+  .ai-badge { display: inline-flex; gap: 6px; align-items: center; background: var(--green-soft); color: var(--green); font-weight: 700; font-size: 12px; padding: 4px 10px; border-radius: 99px; margin: 14px 0 4px; }
+  .spinner { width: 18px; height: 18px; border: 3px solid var(--line); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .list { display: grid; gap: 12px; }
+  .item { box-shadow: 0 1px 3px rgba(11,37,72,0.08); background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; }
+  .item h4 { margin: 0 0 2px; font-size: 16px; }
+  .timeline { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .tl { font-size: 12px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--line); background: #f6fbfb; }
+  .tl.done { background: #eee; color: #888; text-decoration: line-through; }
+  .tl.next { background: var(--gold-soft); border-color: var(--gold); font-weight: 700; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .person { display: flex; gap: 12px; align-items: flex-start; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--green-soft); color: var(--green); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .match { background: var(--green-soft); border: 1px solid #a9e0e1; border-radius: 12px; padding: 14px; margin-top: 12px; }
+  .email { background: #fafefe; border: 1px solid var(--line); border-radius: 10px; padding: 14px; white-space: pre-wrap; font-size: 14px; margin-top: 10px; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 12px 20px; border-radius: 12px; z-index: 99; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+  .empty { padding: 40px; text-align: center; color: var(--muted); }
+
+
+  .banner.ok { background: var(--green-soft); color: var(--green); }
+  .link { border: 0; background: none; color: inherit; font-weight: 700; text-decoration: underline; padding: 0 0 0 8px; }
+  .mbadge { display: inline-block; font-weight: 700; font-size: 13px; padding: 4px 10px; border-radius: 99px; }
+  .mbadge.high { background: var(--green-soft); color: var(--green); }
+  .mbadge.mid { background: var(--gold-soft); color: #9a4f00; }
+  .mbadge.low { background: #eee; color: #777; }
+  .why { font-size: 12px; color: var(--green); margin-top: 2px; }
+  .skills { display: flex; flex-wrap: wrap; gap: 6px; }
+  .skill { display: inline-flex; align-items: center; gap: 4px; background: var(--gold-soft); border: 1px solid #f3c58a; border-radius: 99px; padding: 3px 4px 3px 11px; font-size: 13px; font-weight: 500; }
+  .skill button { border: 0; background: transparent; width: 20px; height: 20px; border-radius: 50%; line-height: 1; color: #9a4f00; }
+  .skill button:hover { background: rgba(0,0,0,0.08); }
+  .zip { width: 120px; }
+  .chip:disabled { opacity: 0.45; cursor: not-allowed; }
+  .item .two { display: block; }
+
+  .zipf { width: 130px; }
+  .milef { width: 150px; }
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--ink); }
+  .arrow { color: #b8c2d0; font-weight: 400; }
+  .arrow.on { color: var(--gold); }
+  .sortsel { max-width: 270px; }
+  .btn.danger { background: var(--red); color: #fff; }
+  .btn.danger:hover { background: #b0301f; }
+  .why.warn { color: var(--red); }
+  .rowact { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .btn.ghost.del:hover { background: var(--red-soft); color: var(--red); border-color: var(--red); }
+  .refpanel { margin-top: 14px; padding: 16px; border: 1px solid #f3c58a; background: var(--gold-soft); border-radius: 12px; }
+  .draft { min-height: 250px; background: #fff; line-height: 1.5; }
+  .docrow { display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .docrow:last-child { border-bottom: 0; }
+  .docrow .rowact { margin-top: 0; }
+  .docicon { font-size: 22px; }
+  .dhead { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+  .dhead:hover b { text-decoration: underline; }
+  .preview { color: var(--muted); font-size: 13px; margin-top: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; }
+  .kindpill { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; background: var(--blue-soft); color: var(--blue); margin-right: 6px; }
+  a.btn { text-decoration: none; }
+  .checkrow { display: flex; gap: 10px; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .checkrow.all { padding-top: 4px; }
+  .checkrow input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ink); }
+
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    .side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
+    .brand { padding: 0 8px; }
+    .side-foot { display: none; }
+    .main { padding: 20px 16px 60px; }
+    .stats { grid-template-columns: 1fr 1fr; }
+    .two, .grid2 { grid-template-columns: 1fr; }
+    table, thead, tbody, tr, td { display: block; }
+    thead { display: none; }
+    tr { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+    td { border: 0; padding: 4px 0; }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useMemo, useEffect } = React;
+
+/* ---------- helpers ---------- */
+const TODAY = new Date(); TODAY.setHours(0, 0, 0, 0);
+const iso = (d) => d.toISOString().slice(0, 10);
+const plus = (n) => { const d = new Date(TODAY); d.setDate(d.getDate() + n); return iso(d); };
+const daysLeft = (s) => Math.round((new Date(s + "T00:00:00") - TODAY) / 86400000);
+const fmt = (s) => new Date(s + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+const REMINDERS = [["1 month", 30], ["2 weeks", 14], ["1 week", 7], ["3 days", 3], ["Day of", 0]];
+const dueClass = (n) => (n < 0 ? "past" : n <= 7 ? "urgent" : n <= 21 ? "soon" : "ok");
+const dueText = (n) => (n < 0 ? "Closed" : n === 0 ? "Due today" : n === 1 ? "1 day left" : n + " days left");
+
+/* ---------- seed data (mock) ---------- */
+const SEED = [
+  { id: 1, title: "Cybersecurity Intern, Summer 2027", org: "Sacramento Municipal Utility District", type: "Internship", deadline: plus(5), location: "Sacramento, CA", city: "Sacramento", zip: "95817", remote: false, near: true, major: "Computer Science", kw: ["cybersecurity", "python", "networking", "linux", "it support"], season: "Summer 2027", hours: 30, pay: 24, lor: 2, essay: true, status: "Applying", source: "Company site", link: "https://www.smud.org/" },
+  { id: 2, title: "MESA Transfer Scholarship", org: "CRC MESA Program", type: "Scholarship", deadline: plus(12), location: "Cosumnes River College", city: "Sacramento", zip: "95823", remote: false, near: true, major: "STEM", kw: ["leadership", "stem", "community", "mathematics"], season: "Fall 2027", hours: null, pay: null, award: 2000, lor: 1, essay: true, status: "Saved", source: "CRC Website", link: "https://crc.losrios.edu/" },
+  { id: 3, title: "Software Engineering Fellowship", org: "Hack the Capital", type: "Fellowship", deadline: plus(26), location: "Remote", city: "Remote", remote: true, near: false, major: "Computer Science", kw: ["python", "javascript", "react", "git", "teamwork"], season: "Summer 2027", hours: 20, pay: 30, lor: 1, essay: false, status: "Saved", source: "LinkedIn", link: "https://www.example.com/hack-the-capital-fellowship" },
+  { id: 4, title: "TRIO Student Support Scholarship", org: "CRC TRIO", type: "Scholarship", deadline: plus(2), location: "Cosumnes River College", city: "Sacramento", zip: "95823", remote: false, near: true, major: "Any", kw: ["leadership", "community", "writing"], season: "Fall 2027", hours: null, pay: null, award: 1500, lor: 0, essay: true, status: "Submitted", source: "CRC Website", link: "https://crc.losrios.edu/" },
+  { id: 5, title: "Data Analyst Intern", org: "Kaiser Permanente", type: "Internship", deadline: plus(44), location: "Rancho Cordova, CA", city: "Rancho Cordova", zip: "95670", remote: false, near: true, major: "Data Science", kw: ["sql", "excel", "python", "data analysis", "statistics"], season: "Summer 2027", hours: 40, pay: 26, lor: 2, essay: false, status: "Saved", source: "Indeed", link: "https://www.kp.org/" },
+  { id: 6, title: "UC Davis Transfer Pathway Fellowship", org: "UC Davis", type: "Fellowship", deadline: plus(19), location: "Davis, CA", city: "Davis", zip: "95616", remote: false, near: false, major: "Any", kw: ["leadership", "research", "community", "teamwork"], season: "Spring 2027", hours: 10, pay: 15, lor: 1, essay: true, status: "Saved", source: "School Program", link: "https://www.ucdavis.edu/" },
+];
+const PEOPLE = [
+  { id: 1, name: "Prof. Alvarez", role: "CS Instructor, CRC", note: "Had me for CIS 20 and CIS 54. Supervised my capstone project. Knows my coding and teamwork.", tags: ["Computer Science", "STEM", "Data Science"] },
+  { id: 2, name: "Ms. Thompson", role: "MESA Program Advisor", note: "Has worked with me for 2 years in MESA. Can speak to leadership and community involvement.", tags: ["Scholarship", "STEM", "Any"] },
+  { id: 3, name: "Dana Reyes", role: "Supervisor, campus IT help desk", note: "My manager on the student IT job. Can speak to reliability and customer service.", tags: ["Internship", "Computer Science"] },
+];
+const SAMPLES = [
+  { title: "Network Engineering Intern", org: "Intel Folsom", type: "Internship", deadline: plus(30), location: "Folsom, CA", city: "Folsom", zip: "95630", remote: false, near: true, major: "Computer Science", kw: ["networking", "linux", "python", "it support"], season: "Summer 2027", hours: 40, pay: 32, lor: 1, essay: false, link: "https://www.intel.com/" },
+  { title: "Dream Big Transfer Scholarship", org: "Sacramento Region Community Foundation", type: "Scholarship", deadline: plus(21), location: "Remote", city: "Remote", remote: true, near: false, major: "Any", kw: ["leadership", "community", "writing"], season: "Fall 2027", hours: null, pay: null, award: 2500, lor: 1, essay: true, link: "https://www.example.com/dream-big-scholarship" },
+];
+const SAMPLE_TEXT = "Dream Big Transfer Scholarship – Sacramento Region Community Foundation. Open to California community college students planning to transfer. Award: $2,500. Apply online by " + fmt(plus(21)) + ". Requires a 500-word essay and one letter of recommendation.";
+
+/* ---------- small components ---------- */
+function Toast({ msg }) { return msg ? <div className="toast">{msg}</div> : null; }
+
+function SmartAdd({ onClose, onSave, companies }) {
+  const [mode, setMode] = useState("text");
+  const [input, setInput] = useState("");
+  const [file, setFile] = useState("");
+  const [phase, setPhase] = useState("input"); // input | loading | review
+  const [draft, setDraft] = useState(null);
+  const [saveCo, setSaveCo] = useState(false);
+
+  const extract = () => {
+    setPhase("loading");
+    setTimeout(() => {
+      const t = (input + file).toLowerCase();
+      let base = /scholar|award|dream big/.test(t) ? SAMPLES[1] : SAMPLES[0];
+      setDraft({ ...base, source: mode === "link" ? "Link" : mode === "shot" ? "Screenshot" : "Pasted text", link: mode === "link" ? cleanUrl(input) : base.link });
+      setPhase("review");
+    }, 1500);
+  };
+  const set = (k, v) => setDraft((d) => ({ ...d, [k]: v }));
+
+  return (
+    <div className="overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <h3>Smart Add</h3>
+        <div className="org">Paste anything. Claude pulls out the details.</div>
+
+        {phase !== "review" && (
+          <>
+            <div className="tabs">
+              {[["text", "Paste text"], ["link", "Link"], ["shot", "Screenshot"]].map(([k, l]) => (
+                <button key={k} className={"tab" + (mode === k ? " on" : "")} onClick={() => setMode(k)}>{l}</button>
+              ))}
+            </div>
+            {mode === "text" && <textarea placeholder="Paste the posting text here…" value={input} onChange={(e) => setInput(e.target.value)} />}
+            {mode === "link" && <input className="field" placeholder="https://… (LinkedIn, Indeed, CRC, MESA, TRIO…)" value={input} onChange={(e) => setInput(e.target.value)} />}
+            {mode === "shot" && (
+              <label className="drop" style={{ display: "block", cursor: "pointer" }}>
+                {file ? "📎 " + file : "Drop a screenshot here or click to upload"}
+                <input type="file" accept="image/*" hidden onChange={(e) => setFile(e.target.files[0]?.name || "")} />
+              </label>
+            )}
+            <div className="row end">
+              {mode === "text" && <button className="btn ghost" onClick={() => setInput(SAMPLE_TEXT)}>Try a sample</button>}
+              <button className="btn ghost" onClick={onClose}>Cancel</button>
+              <button className="btn gold" disabled={phase === "loading" || !(input || file)} onClick={extract}>
+                {phase === "loading" ? <><span className="spinner" /> Claude is reading…</> : "✨ Extract with Claude"}
+              </button>
+            </div>
+          </>
+        )}
+
+        {phase === "review" && draft && (
+          <>
+            <div className="ai-badge">✨ Filled in by Claude. Review and edit before saving.</div>
+            <div className="grid2">
+              <div style={{ gridColumn: "1 / -1" }}><label className="f">Title</label><input className="field" value={draft.title} onChange={(e) => set("title", e.target.value)} /></div>
+              <div><label className="f">Organization</label><input className="field" value={draft.org} onChange={(e) => set("org", e.target.value)} /></div>
+              <div><label className="f">Type</label>
+                <select className="field" value={draft.type} onChange={(e) => set("type", e.target.value)}>
+                  <option>Internship</option><option>Scholarship</option><option>Fellowship</option>
+                </select></div>
+              <div><label className="f">Deadline</label><input type="date" className="field" value={draft.deadline} onChange={(e) => set("deadline", e.target.value)} /></div>
+              <div><label className="f">Location</label><input className="field" value={draft.location} onChange={(e) => setDraft((d) => ({ ...d, location: e.target.value, city: e.target.value.split(",")[0].trim() }))} /></div>
+              <div><label className="f">Major / field</label><input className="field" value={draft.major} onChange={(e) => set("major", e.target.value)} /></div>
+              <div><label className="f">Work style</label>
+                <select className="field" value={draft.remote ? "remote" : "onsite"} onChange={(e) => set("remote", e.target.value === "remote")}>
+                  <option value="onsite">In person</option><option value="remote">Remote</option>
+                </select></div>
+              <div style={{ gridColumn: "1 / -1" }}><label className="f">Application link</label><input className="field" placeholder="https://… where you apply" value={draft.link || ""} onChange={(e) => set("link", e.target.value)} /></div>
+              <div><label className="f">Season</label>
+                <select className="field" value={draft.season} onChange={(e) => set("season", e.target.value)}>
+                  {SEASONS.map((x) => <option key={x}>{x}</option>)}
+                </select></div>
+              <div><label className="f">Hours per week</label><input type="number" min="0" className="field" value={draft.hours ?? ""} onChange={(e) => set("hours", e.target.value === "" ? null : +e.target.value)} /></div>
+              <div><label className="f">Pay ($ per hour)</label><input type="number" min="0" className="field" value={draft.pay ?? ""} onChange={(e) => set("pay", e.target.value === "" ? null : +e.target.value)} /></div>
+              <div><label className="f">Letters of rec needed</label><input type="number" min="0" className="field" value={draft.lor ?? 0} onChange={(e) => set("lor", Math.max(0, +e.target.value || 0))} /></div>
+              <div><label className="f">Essay required</label>
+                <select className="field" value={draft.essay ? "yes" : "no"} onChange={(e) => set("essay", e.target.value === "yes")}>
+                  <option value="no">No</option><option value="yes">Yes</option>
+                </select></div>
+            </div>
+            {!findCompany(companies, draft.org) && (
+              <label className="checkrow" style={{ borderBottom: 0 }}><input type="checkbox" checked={saveCo} onChange={() => setSaveCo(!saveCo)} /> <span>Also save <b>{draft.org}</b> to my companies</span></label>
+            )}
+            <div className="org" style={{ marginTop: 12 }}>
+              Reminders will be set for: {REMINDERS.map(([l]) => l).join(" · ")}
+            </div>
+            <div className="row end">
+              <button className="btn ghost" onClick={() => setPhase("input")}>Back</button>
+              <button className="btn gold" onClick={() => onSave({ ...draft, link: cleanUrl(draft.link) }, saveCo)}>Save to tracker</button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- zip code filter (mock lookup; a real app would use a geocoding API) ---------- */
+const ZIPS = {
+  "95823": [38.4715, -121.4400], "95817": [38.5500, -121.4580], "95814": [38.5816, -121.4944], "95811": [38.5900, -121.4800],
+  "95825": [38.5900, -121.4100], "95826": [38.5530, -121.3800], "95828": [38.4800, -121.4040], "95670": [38.5900, -121.2700],
+  "95616": [38.5440, -121.7400], "95630": [38.6780, -121.1760], "95758": [38.4190, -121.4430], "95624": [38.4150, -121.3700],
+  "95864": [38.5800, -121.3800], "95819": [38.5700, -121.4500], "95820": [38.5330, -121.4400], "95833": [38.6200, -121.5000],
+};
+function zipDist(zip, opp) {
+  const a = ZIPS[zip], b = opp.zip && ZIPS[opp.zip];
+  if (!a || !b || opp.remote) return null;
+  const R = 3958.8, rad = (x) => (x * Math.PI) / 180;
+  const dLat = rad(b[0] - a[0]), dLon = rad(b[1] - a[1]);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a[0])) * Math.cos(rad(b[0])) * Math.sin(dLon / 2) ** 2;
+  return Math.round(2 * R * Math.asin(Math.sqrt(h)));
+}
+
+/* ---------- resume + matching ---------- */
+const SKILL_MAP = {
+  "python": ["python"], "javascript": ["javascript", " js "], "react": ["react"], "java": [" java ", "java,"],
+  "html": ["html", "css"], "c++": ["c++"], "sql": ["sql", "database"], "excel": ["excel", "spreadsheet"],
+  "linux": ["linux", "unix"], "networking": ["network", "cisco", "tcp"], "cybersecurity": ["cyber", "security"],
+  "git": ["github", " git "], "data analysis": ["data analysis", "analytics", "tableau"], "statistics": ["statistic"],
+  "it support": ["help desk", "it support", "tech support", "troubleshoot"], "mathematics": ["calculus", "mathematics", "algebra"],
+  "stem": ["stem", "mesa", "engineering"], "leadership": ["president", "captain", "led ", "leader", "officer"],
+  "teamwork": ["team", "collaborat"], "community": ["volunteer", "community", "outreach", "mentor"],
+  "writing": ["essay", "writing", "journal", "editor"], "research": ["research", "lab "],
+};
+const DEMO_PROFILE = { skills: ["python", "javascript", "git", "it support", "teamwork", "leadership", "community"], major: "Computer Science" };
+const MAJORS = ["Computer Science", "Data Science", "Engineering", "Business", "Any"];
+const STEM_MAJORS = ["Computer Science", "Data Science", "Engineering"];
+function detectSkills(text) {
+  const t = " " + text.toLowerCase() + " ";
+  return Object.keys(SKILL_MAP).filter((s) => SKILL_MAP[s].some((k) => t.includes(k)));
+}
+function guessMajor(text) {
+  const t = text.toLowerCase();
+  if (/data science|statistic/.test(t)) return "Data Science";
+  if (/computer science|programming|software|cis /.test(t)) return "Computer Science";
+  if (/engineering/.test(t)) return "Engineering";
+  if (/business|accounting/.test(t)) return "Business";
+  return "Computer Science";
+}
+function matchOf(opp, profile) {
+  if (!profile || !opp.kw || !opp.kw.length) return null;
+  const hits = opp.kw.filter((k) => profile.skills.includes(k));
+  const majorOk = opp.major !== "Any" && (opp.major === profile.major || (opp.major === "STEM" && STEM_MAJORS.includes(profile.major)));
+  const pct = Math.min(100, Math.round((hits.length / opp.kw.length) * 85) + (majorOk ? 15 : 0));
+  return { pct, hits, majorOk };
+}
+const matchLevel = (p) => (p >= 70 ? "high" : p >= 45 ? "mid" : "low");
+
+function ResumeTab({ profile, setProfile, toast, goTracker, prefs, setPrefs, items, docs, setDocs }) {
+  const [text, setText] = useState("");
+  const [file, setFile] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [newSkill, setNewSkill] = useState("");
+
+  const onFile = (f) => {
+    if (!f) return;
+    setFile(f.name);
+    if (/\.(txt|md)$/i.test(f.name)) {
+      const r = new FileReader();
+      r.onload = () => setText(String(r.result));
+      r.readAsText(f);
+    }
+  };
+  const analyze = () => {
+    setBusy(true);
+    setTimeout(() => {
+      const found = text.trim() ? detectSkills(text) : [];
+      const skills = found.length ? found : DEMO_PROFILE.skills;
+      setProfile({ fileName: file || "Pasted resume", skills, major: text.trim() ? guessMajor(text) : DEMO_PROFILE.major });
+      setBusy(false);
+      const docName = file || "Pasted resume.txt";
+      setDocs((ds) => (ds.some((d) => d.name === docName) ? ds : [{ id: Date.now(), name: docName, cat: "Resume", size: text.length, added: iso(TODAY) }, ...ds]));
+      toast("✨ Resume analyzed and saved to your documents. Opportunities now show match scores.");
+    }, 1500);
+  };
+  const addSkill = () => {
+    const s = newSkill.trim().toLowerCase();
+    if (s && !profile.skills.includes(s)) setProfile({ ...profile, skills: [...profile.skills, s] });
+    setNewSkill("");
+  };
+
+  return (
+    <>
+      <div className="top"><div><h2>Profile</h2><p>Your resume, documents and preferences in one place. Claude uses them to match opportunities and draft messages.</p></div></div>
+      <div className="two">
+        <div className="item">
+          <b>1. Import your resume</b>
+          <label className="drop" style={{ display: "block", cursor: "pointer", marginTop: 10 }}>
+            {file ? "📎 " + file : "Click to upload your resume (PDF, Word or .txt)"}
+            <input type="file" accept=".pdf,.doc,.docx,.txt,.md" hidden onChange={(e) => onFile(e.target.files[0])} />
+          </label>
+          <div className="org" style={{ margin: "10px 0 6px" }}>Or paste the text:</div>
+          <textarea placeholder="Paste your resume text here…" value={text} onChange={(e) => setText(e.target.value)} />
+          <div className="org" style={{ marginTop: 8 }}>Mock note: only .txt/.md files and pasted text are read here. A PDF or Word file loads a demo profile. The real app sends the file to Claude.</div>
+          <div className="row end">
+            <button className="btn ghost" onClick={() => setText("Computer science student at Cosumnes River College. IT help desk technician: troubleshoot hardware and network issues. Python and JavaScript projects on GitHub. President of the coding club, volunteer tutor, MESA member. Team capstone project in SQL and React.")}>Try a sample</button>
+            <button className="btn gold" disabled={busy || !(text.trim() || file)} onClick={analyze}>
+              {busy ? <><span className="spinner" /> Claude is reading…</> : "✨ Analyze resume"}
+            </button>
+          </div>
+        </div>
+
+        <div className="item">
+          <b>2. What Claude found</b>
+          {!profile ? <div className="empty">Nothing yet. Import a resume to see your skills here.</div> : (
+            <>
+              <div className="org" style={{ margin: "4px 0 12px" }}>From {profile.fileName}. Edit anything that looks off.</div>
+              <label className="f">Major / field</label>
+              <select className="field" value={profile.major} onChange={(e) => setProfile({ ...profile, major: e.target.value })}>
+                {MAJORS.map((m) => <option key={m}>{m}</option>)}
+              </select>
+              <label className="f" style={{ marginTop: 14 }}>Skills &amp; experience</label>
+              <div className="skills">
+                {profile.skills.map((s) => (
+                  <span key={s} className="skill">{s}<button aria-label={"Remove " + s} onClick={() => setProfile({ ...profile, skills: profile.skills.filter((x) => x !== s) })}>×</button></span>
+                ))}
+              </div>
+              <div className="row" style={{ marginTop: 10 }}>
+                <input className="field" placeholder="Add a skill…" value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addSkill()} />
+                <button className="btn ghost small" onClick={addSkill}>Add</button>
+              </div>
+              <div className="row end"><button className="btn gold" onClick={goTracker}>See my matches →</button></div>
+            </>
+          )}
+        </div>
+      </div>
+      <Preferences prefs={prefs} setPrefs={setPrefs} items={items} goTracker={goTracker} />
+      <Documents docs={docs} setDocs={setDocs} toast={toast} />
+    </>
+  );
+}
+
+/* ---------- documents ---------- */
+const DOC_CATS = ["Resume", "Cover letter", "Previous application", "Transcript", "Other"];
+const DOCS = [
+  { id: 1, name: "Alex_Rivera_Resume.txt", cat: "Resume", size: 1557, added: plus(-10) },
+  { id: 2, name: "Cover letter - SMUD Cybersecurity.pdf", cat: "Cover letter", size: 48200, added: plus(-6) },
+  { id: 3, name: "Cover letter - General.docx", cat: "Cover letter", size: 21400, added: plus(-20) },
+  { id: 4, name: "CRC Foundation Scholarship application (2025).pdf", cat: "Previous application", size: 212000, added: plus(-300) },
+  { id: 5, name: "CRC unofficial transcript.pdf", cat: "Transcript", size: 98000, added: plus(-14) },
+];
+const fmtSize = (b) => (!b ? "–" : b < 1024 ? b + " B" : b < 1048576 ? Math.round(b / 1024) + " KB" : (b / 1048576).toFixed(1) + " MB");
+
+function Documents({ docs, setDocs, toast }) {
+  const [upCat, setUpCat] = useState("Resume");
+  const [catF, setCatF] = useState("All");
+  const [showArch, setShowArch] = useState(false);
+  const add = (files) => {
+    const list = [...files];
+    if (!list.length) return;
+    setDocs([...list.map((f, i) => ({ id: Date.now() + i, name: f.name, cat: upCat, size: f.size, added: iso(TODAY) })), ...docs]);
+    toast("Saved " + list.length + (list.length > 1 ? " documents" : " document") + " as " + upCat.toLowerCase());
+  };
+  const upd = (id, v) => setDocs(docs.map((d) => (d.id === id ? { ...d, ...v } : d)));
+  const live = docs.filter((d) => !d.archived);
+  const shown = docs.filter((d) => !!d.archived === showArch).filter((d) => catF === "All" || d.cat === catF);
+
+  return (
+    <div className="item" style={{ marginTop: 16 }}>
+      <b>4. Your documents</b>
+      <div className="org" style={{ marginBottom: 12 }}>Keep your resume, cover letters, past applications and other files in one place. Attach them to messages and reuse them for new applications. Mock note: files stay in this browser tab only.</div>
+
+      <div className="row" style={{ flexWrap: "wrap", marginBottom: 14 }}>
+        <span className="org" style={{ fontWeight: 600 }}>Upload as:</span>
+        <select className="status" value={upCat} onChange={(e) => setUpCat(e.target.value)}>{DOC_CATS.map((c) => <option key={c}>{c}</option>)}</select>
+        <label className="btn gold small" style={{ cursor: "pointer" }}>＋ Upload files
+          <input type="file" multiple hidden onChange={(e) => { add(e.target.files); e.target.value = ""; }} />
+        </label>
+      </div>
+
+      <div className="filters">
+        <button className={"chip" + (catF === "All" ? " on" : "")} onClick={() => setCatF("All")}>All ({live.length})</button>
+        {DOC_CATS.map((c) => <button key={c} className={"chip" + (catF === c ? " on" : "")} onClick={() => setCatF(c)}>{c} ({live.filter((d) => d.cat === c).length})</button>)}
+        <button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({docs.filter((d) => d.archived).length})</button>
+      </div>
+
+      <div className="card">
+        {shown.length === 0 && <div className="empty">{showArch ? "No documents archived." : "No documents here yet. Upload one above."}</div>}
+        {shown.map((d) => (
+          <div className="docrow" key={d.id}>
+            <div className="docicon">{/\.pdf$/i.test(d.name) ? "📕" : /\.docx?$/i.test(d.name) ? "📘" : "📄"}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="title" style={{ overflowWrap: "anywhere" }}>{d.name}</div>
+              <div className="org">{fmtSize(d.size)} · added {fmt(d.added)}</div>
+            </div>
+            <select className="status" value={d.cat} onChange={(e) => upd(d.id, { cat: e.target.value })} aria-label="Category">{DOC_CATS.map((c) => <option key={c}>{c}</option>)}</select>
+            <RowActions archived={!!d.archived} onArchive={() => { upd(d.id, { archived: true }); toast("Archived " + d.name); }} onRestore={() => upd(d.id, { archived: false })} onDelete={() => { setDocs(docs.filter((x) => x.id !== d.id)); toast("🗑️ Deleted " + d.name); }} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- preferences ---------- */
+const SEASONS = ["Spring 2027", "Summer 2027", "Fall 2027", "Spring 2028", "Summer 2028"];
+const PLACES = ["Sacramento", "Elk Grove", "Rancho Cordova", "Folsom", "Davis", "San Francisco Bay Area", "Out of state"];
+const BLANK_PREFS = { zip: "", maxMiles: "25", places: [], remoteOk: true, seasons: [], minHours: "", maxHours: "", minPay: "", unpaidOk: true };
+const DEMO_PREFS = { zip: "95823", maxMiles: "25", places: ["Sacramento", "Rancho Cordova", "Folsom", "Davis"], remoteOk: true, seasons: ["Summer 2027"], minHours: "10", maxHours: "40", minPay: "20", unpaidOk: false };
+
+function prefCheck(o, p) {
+  const miss = [];
+  if (p.seasons.length && o.season && !p.seasons.includes(o.season)) miss.push("season");
+  if (o.pay != null) {
+    if (o.pay === 0 && !p.unpaidOk) miss.push("unpaid");
+    else if (o.pay > 0 && p.minPay !== "" && o.pay < +p.minPay) miss.push("pay");
+  }
+  if (o.hours != null) {
+    if (p.maxHours !== "" && o.hours > +p.maxHours) miss.push("hours");
+    if (p.minHours !== "" && o.hours < +p.minHours) miss.push("hours");
+  }
+  if (o.remote) {
+    if (!p.remoteOk) miss.push("remote work");
+  } else {
+    const zipOk = !!ZIPS[p.zip];
+    if (p.places.length || zipOk) {
+      const d = zipOk ? zipDist(p.zip, o) : null;
+      const near = d != null && d <= +p.maxMiles;
+      if (!(p.places.includes(o.city) || near)) miss.push("location");
+    }
+  }
+  return miss;
+}
+const detailLine = (o) => [o.season, o.hours != null ? o.hours + " hrs/wk" : null, o.pay != null ? (o.pay === 0 ? "Unpaid" : "$" + o.pay + "/hr") : o.award ? "$" + o.award.toLocaleString() + " award" : null].filter(Boolean).join(" · ");
+
+function Preferences({ prefs, setPrefs, items, goTracker }) {
+  const [custom, setCustom] = useState("");
+  const set = (k, v) => setPrefs({ ...prefs, [k]: v });
+  const tog = (k, v) => set(k, prefs[k].includes(v) ? prefs[k].filter((x) => x !== v) : [...prefs[k], v]);
+  const addPlace = () => { const v = custom.trim(); if (v && !prefs.places.includes(v)) set("places", [...prefs.places, v]); setCustom(""); };
+  const placeList = [...PLACES, ...prefs.places.filter((p) => !PLACES.includes(p))];
+  const fits = items.filter((o) => prefCheck(o, prefs).length === 0).length;
+  const zipBad = prefs.zip.length === 5 && !ZIPS[prefs.zip];
+
+  return (
+    <div className="item" style={{ marginTop: 16 }}>
+      <b>3. Your preferences</b>
+      <div className="org" style={{ marginBottom: 12 }}>Tell us what you're willing to do. The tracker can hide or flag anything outside it.</div>
+
+      <label className="f">Where can you travel?</label>
+      <div className="row" style={{ flexWrap: "wrap", marginBottom: 8 }}>
+        <input className="field zipf" inputMode="numeric" maxLength={5} placeholder="Home ZIP" value={prefs.zip} onChange={(e) => set("zip", e.target.value.replace(/\D/g, ""))} />
+        <select className="field milef" value={prefs.maxMiles} onChange={(e) => set("maxMiles", e.target.value)}>
+          <option value="5">within 5 mi</option><option value="10">within 10 mi</option><option value="25">within 25 mi</option><option value="50">within 50 mi</option><option value="100">within 100 mi</option>
+        </select>
+        <span className="org">of home</span>
+      </div>
+      {zipBad && <div className="org" style={{ color: "var(--red)", marginBottom: 6 }}>That ZIP isn't in the mock's list. Try 95823, 95814, 95670, 95616 or 95630.</div>}
+      <div className="skills">
+        {placeList.map((p) => <button key={p} className={"chip" + (prefs.places.includes(p) ? " on" : "")} onClick={() => tog("places", p)}>{p}</button>)}
+        <button className={"chip" + (prefs.remoteOk ? " on" : "")} onClick={() => set("remoteOk", !prefs.remoteOk)}>🏠 Open to remote</button>
+      </div>
+      <div className="row" style={{ marginTop: 8 }}>
+        <input className="field" placeholder="Add another place…" value={custom} onChange={(e) => setCustom(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addPlace()} />
+        <button className="btn ghost small" onClick={addPlace}>Add</button>
+      </div>
+
+      <label className="f" style={{ marginTop: 16 }}>Which seasons can you work?</label>
+      <div className="skills">
+        {SEASONS.map((s) => <button key={s} className={"chip" + (prefs.seasons.includes(s) ? " on" : "")} onClick={() => tog("seasons", s)}>{s}</button>)}
+      </div>
+
+      <div className="grid2" style={{ marginTop: 16 }}>
+        <div>
+          <label className="f">Hours per week</label>
+          <div className="row">
+            <input className="field" type="number" min="0" placeholder="Min" value={prefs.minHours} onChange={(e) => set("minHours", e.target.value)} />
+            <span className="org">to</span>
+            <input className="field" type="number" min="0" placeholder="Max" value={prefs.maxHours} onChange={(e) => set("maxHours", e.target.value)} />
+          </div>
+        </div>
+        <div>
+          <label className="f">Minimum pay ($ per hour)</label>
+          <div className="row">
+            <input className="field" type="number" min="0" placeholder="e.g. 20" value={prefs.minPay} onChange={(e) => set("minPay", e.target.value)} />
+            <button className={"chip" + (prefs.unpaidOk ? " on" : "")} onClick={() => set("unpaidOk", !prefs.unpaidOk)}>Unpaid OK</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="match" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div><b>{fits} of {items.length}</b> saved opportunities fit your preferences.</div>
+        <div className="row">
+          <button className="btn ghost small" onClick={() => setPrefs(BLANK_PREFS)}>Clear preferences</button>
+          <button className="btn gold small" onClick={goTracker}>See them in the tracker →</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- tracker ---------- */
+const SORT_KEYS = [
+  ["deadline", "Deadline", "soonest first", "latest first"],
+  ["match", "Resume match", "lowest first", "best first"],
+  ["lor", "Letters of rec needed", "fewest first", "most first"],
+  ["pay", "Pay ($/hr)", "lowest first", "highest first"],
+  ["hours", "Hours per week", "fewest first", "most first"],
+  ["title", "Name", "A to Z", "Z to A"],
+];
+function sortVal(o, key) {
+  if (key === "deadline") return new Date(o.deadline).getTime();
+  if (key === "match") return o.m ? o.m.pct : null;
+  if (key === "lor") return o.lor ?? null;
+  if (key === "pay") return o.pay ?? null;
+  if (key === "hours") return o.hours ?? null;
+  return o.title.toLowerCase();
+}
+
+function Tracker({ items, setItems, openAdd, profile, goResume, contacts, prefs, onDelete }) {
+  const [q, setQ] = useState("");
+  const [type, setType] = useState("All");
+  const [flags, setFlags] = useState({ remote: false, match: false, fits: false });
+  const [zip, setZip] = useState("");
+  const [radius, setRadius] = useState("25");
+  const [statusF, setStatusF] = useState("All");
+  const [win, setWin] = useState("all");
+  const [lorF, setLorF] = useState("any");
+  const [seasonF, setSeasonF] = useState("all");
+  const [sort, setSort] = useState("deadline-asc");
+  const [showArch, setShowArch] = useState(false);
+  const zipOk = !!ZIPS[zip];
+  const [sKey, sDir] = sort.split("-");
+  const dir = sDir === "asc" ? 1 : -1;
+
+  const shown = useMemo(() => items
+    .filter((i) => !!i.archived === showArch)
+    .map((i) => ({ ...i, m: matchOf(i, profile), dist: zipOk ? zipDist(zip, i) : null, miss: prefCheck(i, prefs) }))
+    .filter((i) => type === "All" || i.type === type)
+    .filter((i) => statusF === "All" || i.status === statusF)
+    .filter((i) => seasonF === "all" || i.season === seasonF)
+    .filter((i) => lorF === "any" || (lorF === "0" ? i.lor === 0 : lorF === "1" ? i.lor === 1 : i.lor >= 2))
+    .filter((i) => win === "all" || (daysLeft(i.deadline) >= 0 && daysLeft(i.deadline) <= +win))
+    .filter((i) => !flags.remote || i.remote)
+    .filter((i) => !zipOk || i.remote || (i.dist != null && i.dist <= +radius))
+    .filter((i) => !flags.match || (i.m && i.m.pct >= 50))
+    .filter((i) => !flags.fits || i.miss.length === 0)
+    .filter((i) => (i.title + i.org + i.major).toLowerCase().includes(q.toLowerCase()))
+    .sort((a, b) => {
+      const x = sortVal(a, sKey), y = sortVal(b, sKey);
+      if (x == null && y == null) return 0;
+      if (x == null) return 1;
+      if (y == null) return -1;
+      const r = x < y ? -1 : x > y ? 1 : 0;
+      return r !== 0 ? r * dir : new Date(a.deadline) - new Date(b.deadline);
+    }),
+  [items, q, type, flags, statusF, win, lorF, seasonF, sort, profile, zip, radius, zipOk, prefs, showArch]);
+
+  const active = items.filter((i) => !i.archived);
+  const patch = (id, v) => setItems(items.map((i) => (i.id === id ? { ...i, ...v } : i)));
+  const upcoming = active.filter((i) => daysLeft(i.deadline) >= 0 && i.status !== "Submitted");
+  const week = upcoming.filter((i) => daysLeft(i.deadline) <= 7).length;
+  const setStatus = (id, s) => setItems(items.map((i) => (i.id === id ? { ...i, status: s } : i)));
+  const clear = () => { setQ(""); setType("All"); setStatusF("All"); setWin("all"); setLorF("any"); setSeasonF("all"); setSort("deadline-asc"); setFlags({ remote: false, match: false, fits: false }); setShowArch(false); setZip(""); setRadius("25"); };
+  const headSort = (k, firstDir) => {
+    if (k === "match" && !profile) { goResume(); return; }
+    setSort(sKey === k ? k + "-" + (dir === 1 ? "desc" : "asc") : k + "-" + firstDir);
+  };
+  const arrow = (k) => (sKey === k ? (dir === 1 ? " ▲" : " ▼") : " ↕");
+  const Th = ({ k, first, children }) => <th className="sortable" onClick={() => headSort(k, first)}>{children}<span className={"arrow" + (sKey === k ? " on" : "")}>{arrow(k)}</span></th>;
+
+  return (
+    <>
+      <div className="top">
+        <div><h2>Your opportunities</h2><p>Everything in one place. Filter and sort by what matters to you.</p></div>
+        <button className="btn gold" onClick={openAdd}>＋ Smart Add</button>
+      </div>
+      <div className="stats">
+        <div className="stat"><div className="n">{active.length}</div><div className="l">Saved</div></div>
+        <div className="stat alert"><div className="n">{week}</div><div className="l">Due in 7 days</div></div>
+        <div className="stat"><div className="n">{active.filter((i) => i.status === "Applying").length}</div><div className="l">In progress</div></div>
+        <div className="stat"><div className="n">{active.filter((i) => i.status === "Submitted").length}</div><div className="l">Submitted</div></div>
+      </div>
+
+      {profile ? (
+        <div className="banner ok">👤 Matching against your profile (<b>{profile.fileName}</b>) · {profile.skills.length} skills · {profile.major} <button className="link" onClick={goResume}>Edit profile</button></div>
+      ) : (
+        <div className="banner">👤 Add your resume to your profile to see how well each opportunity fits you. <button className="link" onClick={goResume}>Go to profile →</button></div>
+      )}
+
+      <div className="filters">
+        <input className="search" placeholder="Search title, company, major…" value={q} onChange={(e) => setQ(e.target.value)} />
+        {["All", "Internship", "Scholarship", "Fellowship"].map((t) => (
+          <button key={t} className={"chip" + (type === t ? " on" : "")} onClick={() => setType(t)}>{t}</button>
+        ))}
+      </div>
+      <div className="filters">
+        <button className={"chip" + (flags.fits ? " on" : "")} onClick={() => setFlags({ ...flags, fits: !flags.fits })}>✅ Fits my preferences</button>
+        <button className={"chip" + (flags.match ? " on" : "")} title={profile ? "" : "Import a resume first"} onClick={() => (profile ? setFlags({ ...flags, match: !flags.match }) : goResume())}>⭐ Good fit for my resume{profile ? "" : " (add resume in Profile)"}</button>
+        <button className={"chip" + (flags.remote ? " on" : "")} onClick={() => setFlags({ ...flags, remote: !flags.remote })}>🏠 Remote</button>
+        <button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({items.filter((i) => i.archived).length})</button>
+        <input className="status zip" inputMode="numeric" maxLength={5} placeholder="📍 ZIP code" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))} />
+        <select className="status" value={radius} onChange={(e) => setRadius(e.target.value)} disabled={!zipOk}>
+          <option value="5">within 5 mi</option><option value="10">within 10 mi</option><option value="25">within 25 mi</option><option value="50">within 50 mi</option>
+        </select>
+      </div>
+      <div className="filters">
+        <select className="status" value={win} onChange={(e) => setWin(e.target.value)}>
+          <option value="all">Any deadline</option><option value="7">Due in 7 days</option><option value="30">Due in 30 days</option>
+        </select>
+        <select className="status" value={seasonF} onChange={(e) => setSeasonF(e.target.value)}>
+          <option value="all">Any season</option>{SEASONS.map((s) => <option key={s}>{s}</option>)}
+        </select>
+        <select className="status" value={lorF} onChange={(e) => setLorF(e.target.value)}>
+          <option value="any">Any # of letters</option><option value="0">No letter needed</option><option value="1">1 letter</option><option value="2">2 or more letters</option>
+        </select>
+        <select className="status" value={statusF} onChange={(e) => setStatusF(e.target.value)}>
+          <option>All</option><option>Saved</option><option>Applying</option><option>Submitted</option>
+        </select>
+        <select className="status sortsel" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
+          {SORT_KEYS.flatMap(([k, label, a, d]) => [
+            <option key={k + "a"} value={k + "-asc"} disabled={k === "match" && !profile}>Sort: {label}, {a}{k === "match" && !profile ? " (import a resume first)" : ""}</option>,
+            <option key={k + "d"} value={k + "-desc"} disabled={k === "match" && !profile}>Sort: {label}, {d}{k === "match" && !profile ? " (import a resume first)" : ""}</option>,
+          ])}
+        </select>
+        <button className="chip" onClick={clear}>Clear all</button>
+      </div>
+      {zipOk && <div className="banner ok">📍 Showing opportunities within {radius} miles of {zip}, plus remote ones.</div>}
+      {zip.length === 5 && !zipOk && <div className="banner">That ZIP isn't in the mock's small list. Try 95823, 95814, 95670, 95616 or 95630.</div>}
+
+      <div className="card">
+        {shown.length === 0 ? <div className="empty">{showArch ? "Nothing archived. Archived opportunities show up here." : items.length === 0 ? "Nothing saved yet. Use Smart Add to add your first opportunity." : "No matches. Try clearing a filter."}</div> : (
+          <table>
+            <thead><tr><Th k="title" first="asc">Opportunity</Th><th>Type</th><th>Where</th><Th k="match" first="desc">Match</Th><Th k="lor" first="asc">Requirements</Th><Th k="deadline" first="asc">Deadline</Th><th>Status</th></tr></thead>
+            <tbody>
+              {shown.map((i) => {
+                const n = daysLeft(i.deadline);
+                return (
+                  <tr key={i.id}>
+                    <td>
+                      <div className="title">{i.title}</div>
+                      <div className="org">{i.org} · via {i.source}</div>
+                      <div className="org">{detailLine(i)}</div>
+                      {i.m && i.m.hits.length > 0 && <div className="why">Matches your: {i.m.hits.join(", ")}</div>}
+                      {i.miss.length > 0 && <div className="why warn">Outside your preferences: {i.miss.join(", ")}</div>}
+                      {contacts.filter((c) => c.links.includes(i.id)).length > 0 && <div className="why" style={{ color: "var(--blue)" }}>👤 You know: {contacts.filter((c) => c.links.includes(i.id)).map((c) => c.name).join(", ")}</div>}
+                      <ApplyLink key={i.id + ":" + (i.link || "")} item={i} onSave={(link) => patch(i.id, { link })} onStart={() => i.status === "Saved" && patch(i.id, { status: "Applying" })} />
+                    </td>
+                    <td><span className={"pill " + i.type}>{i.type}</span></td>
+                    <td><span className="tag">{i.remote ? "Remote" : i.location}</span>{i.dist != null && <div className="org">{i.dist} mi away</div>}</td>
+                    <td>{i.m ? <span className={"mbadge " + matchLevel(i.m.pct)}>{i.m.pct}%</span> : <span className="org">–</span>}</td>
+                    <td>
+                      <span className="tag">✉ {i.lor === 0 ? "No letters" : i.lor + (i.lor === 1 ? " letter" : " letters")}</span>
+                      {i.essay && <span className="tag">📝 Essay</span>}
+                    </td>
+                    <td><span className={"due " + dueClass(n)}>{dueText(n)}</span><div className="org">{fmt(i.deadline)}</div></td>
+                    <td>
+                      <select className="status" value={i.status} onChange={(e) => setStatus(i.id, e.target.value)}>
+                        <option>Saved</option><option>Applying</option><option>Submitted</option>
+                      </select>
+                      <RowActions archived={!!i.archived} onArchive={() => patch(i.id, { archived: true })} onRestore={() => patch(i.id, { archived: false })} onDelete={() => onDelete(i.id)} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ---------- application links ---------- */
+const cleanUrl = (v) => { const t = (v || "").trim(); if (!t || t === "#") return ""; return /^https?:\/\//i.test(t) ? t : "https://" + t; };
+const hasLink = (u) => /^https?:\/\/[^\s.\/]+\.[^\s]+/i.test(u || "");
+function ApplyLink({ item, onSave, onStart }) {
+  const [edit, setEdit] = useState(false);
+  const [val, setVal] = useState(item.link && item.link !== "#" ? item.link : "");
+  const [err, setErr] = useState(false);
+  const commit = () => {
+    const u = cleanUrl(val);
+    if (u && !hasLink(u)) { setErr(true); return; }
+    onSave(u); setErr(false); setEdit(false);
+  };
+  if (edit) return (
+    <div className="rowact">
+      <input className="field" style={{ maxWidth: 270, padding: "6px 10px", borderColor: err ? "var(--red)" : undefined }} placeholder="https://… application page" value={val} onChange={(e) => { setVal(e.target.value); setErr(false); }} onKeyDown={(e) => e.key === "Enter" && commit()} />
+      <button className="btn gold small" onClick={commit}>Save</button>
+      <button className="btn ghost small" onClick={() => { setEdit(false); setErr(false); }}>Cancel</button>
+      {err && <span className="org" style={{ color: "var(--red)" }}>That doesn't look like a web address.</span>}
+    </div>
+  );
+  return (
+    <div className="rowact">
+      {hasLink(item.link)
+        ? <a className="btn gold small" href={item.link} target="_blank" rel="noreferrer" onClick={onStart}>Apply ↗</a>
+        : <button className="btn ghost small" onClick={() => setEdit(true)}>＋ Add application link</button>}
+      {hasLink(item.link) && <button className="btn ghost small" onClick={() => { setVal(item.link); setEdit(true); }}>✎ Edit link</button>}
+    </div>
+  );
+}
+
+/* ---------- archive / delete controls ---------- */
+function RowActions({ archived, onArchive, onRestore, onDelete }) {
+  const [ask, setAsk] = useState(false);
+  if (ask) return (
+    <span className="rowact">
+      <span className="org">Delete for good?</span>
+      <button className="btn danger small" onClick={() => { setAsk(false); onDelete(); }}>Yes, delete</button>
+      <button className="btn ghost small" onClick={() => setAsk(false)}>Cancel</button>
+    </span>
+  );
+  return (
+    <span className="rowact">
+      {archived ? <button className="btn ghost small" onClick={onRestore}>↩ Restore</button> : <button className="btn ghost small" onClick={onArchive}>🗄 Archive</button>}
+      <button className="btn ghost small del" onClick={() => setAsk(true)}>🗑 Delete</button>
+    </span>
+  );
+}
+
+/* ---------- saved drafts ---------- */
+const DRAFTS = [
+  { id: 101, kind: "Referral message", refId: 1, toName: "Priya Shah", about: "Cybersecurity Intern, Summer 2027", status: "draft", created: plus(-2), updated: plus(-2),
+    body: "Hi Priya,\n\nIt was great meeting you (CRC Career Fair, Oct 2026). I'm a Computer Science student at Cosumnes River College with experience in python, javascript and git.\n\nI'm applying for the Cybersecurity Intern, Summer 2027 at Sacramento Municipal Utility District. Would you be open to referring me for it or putting in a good word?\n\nThank you so much for your time. I really appreciate it.\n\n[Your name]" },
+  { id: 102, kind: "Referral message", refId: 2, toName: "Marcus Lee", about: "Data Analyst Intern", status: "draft", created: plus(-1), updated: plus(-1),
+    body: "Hi Marcus,\n\nThanks again for the coffee chat. I'm applying for the Data Analyst Intern role at Kaiser Permanente and would really value your take on my resume. Would you be willing to look it over and share any feedback?\n\nIf it seems like a fit, I'd also appreciate a referral.\n\nThank you so much for your time.\n\n[Your name]" },
+  { id: 103, kind: "Letter of rec request", refId: null, toName: "Prof. Alvarez", about: "Software Engineering Fellowship", status: "draft", created: plus(-3), updated: plus(-3),
+    body: "Hi Prof. Alvarez,\n\nI hope you're doing well! I'm applying for the Software Engineering Fellowship at Hack the Capital, and I'd be grateful if you'd write a letter of recommendation. You supervised my capstone project, so I thought you'd be a great fit to speak to my work.\n\nI can send my resume and the posting. Thank you so much!\n\n[Your name]" },
+];
+
+function Drafts({ drafts, setDrafts, toast }) {
+  const [view, setView] = useState("draft");
+  const [open, setOpen] = useState(null);
+  const [body, setBody] = useState("");
+  const live = drafts.filter((d) => !d.archived);
+  const list = drafts
+    .filter((d) => (view === "archived" ? d.archived : !d.archived && d.status === view))
+    .sort((a, b) => (a.updated < b.updated ? 1 : a.updated > b.updated ? -1 : b.id - a.id));
+  const upd = (id, v) => setDrafts(drafts.map((d) => (d.id === id ? { ...d, ...v } : d)));
+  const toggle = (d) => { if (open === d.id) { setOpen(null); } else { setOpen(d.id); setBody(d.body); } };
+  const copy = () => {
+    try { navigator.clipboard.writeText(body).then(() => toast("Copied to clipboard"), () => toast("Couldn't copy. Select the text and copy it yourself.")); }
+    catch (e) { toast("Couldn't copy. Select the text and copy it yourself."); }
+  };
+
+  return (
+    <>
+      <div className="top"><div><h2>Drafts</h2><p>Messages you've written. Click one to open it and edit.</p></div></div>
+      <div className="filters">
+        {[["draft", "Drafts", live.filter((d) => d.status === "draft").length], ["sent", "Sent", live.filter((d) => d.status === "sent").length], ["archived", "🗄 Archived", drafts.filter((d) => d.archived).length]].map(([k, l, n]) => (
+          <button key={k} className={"chip" + (view === k ? " on" : "")} onClick={() => { setView(k); setOpen(null); }}>{l} ({n})</button>
+        ))}
+      </div>
+      <div className="list">
+        {list.length === 0 && <div className="card"><div className="empty">{view === "draft" ? "No drafts yet. Write one from an affiliate's card or the recommender page and click Save draft." : view === "sent" ? "Nothing sent yet." : "Nothing archived."}</div></div>}
+        {list.map((d) => (
+          <div className="item" key={d.id}>
+            <div className="dhead" role="button" tabIndex={0} onClick={() => toggle(d)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(d)}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <span className="kindpill">{d.kind}</span> <b>To: {d.toName}</b>
+                {d.about && <div className="org">About: {d.about}</div>}
+                {open !== d.id && <div className="preview">{d.body}</div>}
+              </div>
+              <div className="org" style={{ textAlign: "right", whiteSpace: "nowrap" }}>{d.status === "sent" ? "Sent " : "Edited "}{fmt(d.updated)}<div>{open === d.id ? "▲ Close" : "✎ Open to edit"}</div></div>
+            </div>
+            {open === d.id && (
+              <div style={{ marginTop: 12 }}>
+                <textarea className="draft" value={body} onChange={(e) => setBody(e.target.value)} aria-label="Message" />
+                <div className="row end" style={{ flexWrap: "wrap" }}>
+                  {body !== d.body && <span className="org" style={{ color: "var(--red)", marginRight: "auto" }}>Unsaved changes</span>}
+                  <button className="btn ghost small" onClick={copy}>Copy</button>
+                  <button className="btn ghost small" disabled={body === d.body} onClick={() => { upd(d.id, { body, updated: iso(TODAY) }); toast("Saved your changes"); }}>Save changes</button>
+                  <button className="btn gold small" disabled={!body.trim()} onClick={() => { upd(d.id, { body, status: "sent", updated: iso(TODAY) }); toast("✅ Sent to " + d.toName + " (mock)"); setOpen(null); }}>{d.status === "sent" ? "Send again" : "Yes, send message"}</button>
+                </div>
+              </div>
+            )}
+            <RowActions archived={!!d.archived} onArchive={() => { upd(d.id, { archived: true }); setOpen(null); toast("Archived draft"); }} onRestore={() => upd(d.id, { archived: false })} onDelete={() => { setDrafts(drafts.filter((x) => x.id !== d.id)); setOpen(null); toast("🗑️ Deleted draft"); }} />
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/* ---------- referral / outreach drafting ---------- */
+const PURPOSES = [
+  ["Referral", "Ask for a referral"],
+  ["Resume review", "Resume review"],
+  ["Informational chat", "Informational chat"],
+  ["Introduction", "Intro to someone"],
+  ["Advice", "Application advice"],
+  ["Reconnect", "Reconnect / check in"],
+];
+const ASKS = {
+  "Referral": (o) => "Would you be open to referring me" + (o ? " for it" : "") + " or putting in a good word?",
+  "Resume review": () => "Would you be willing to take a quick look at my resume and share any feedback?",
+  "Informational chat": () => "Could we set up a 15-minute call so I can learn about your path and the work you do?",
+  "Introduction": () => "Is there anyone on your team you'd recommend I connect with?",
+  "Advice": (o) => "I'd also value any advice you have on making my application" + (o ? "" : "s") + " stand out.",
+  "Reconnect": () => "I wanted to say hello and share what I've been working on since we met.",
+};
+const listJoin = (a) => (a.length <= 1 ? a.join("") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]);
+
+function draftMessage({ c, o, purposes, custom, profile, attach }) {
+  const greet = /^(Dr\.|Prof\.|Ms\.|Mr\.|Mrs\.)/.test(c.name) ? c.name : c.name.split(" ")[0];
+  const top = profile ? profile.skills.slice(0, 3) : [];
+  const intro = profile
+    ? "I'm a " + profile.major + " student at Cosumnes River College" + (top.length ? " with experience in " + listJoin(top) : "") + "."
+    : "I'm a community college student in Sacramento.";
+  const parts = [
+    "Hi " + greet + ",",
+    "It was great meeting you" + (c.met ? " (" + c.met + ")" : "") + ". " + intro,
+  ];
+  if (o) parts.push("I'm applying for the " + o.title + " at " + o.org + ", and the deadline is " + fmt(o.deadline) + ".");
+  parts.push(purposes.length ? purposes.map((p) => ASKS[p](o)).join(" ") : "I wanted to reach out and say hello.");
+  if (custom.trim()) parts.push(custom.trim());
+  if (attach.length) parts.push("I've attached " + listJoin(attach) + " so you can see more about my background.");
+  parts.push("Thank you so much for your time. I really appreciate it.\n\n[Your name]");
+  return parts.join("\n\n");
+}
+
+function ReferralPanel({ c, items, docs, profile, toast, onSent, onClose, initial, onSaveDraft }) {
+  const linked = c.links.map((id) => items.find((i) => i.id === id)).filter((o) => o && !o.archived);
+  const [purposes, setPurposes] = useState(linked.length ? ["Referral"] : ["Informational chat"]);
+  const [oppId, setOppId] = useState(linked[0] ? String(linked[0].id) : "");
+  const [custom, setCustom] = useState("");
+  const [attach, setAttach] = useState([]);
+  const [edited, setEdited] = useState(!!initial);
+  const [draftId, setDraftId] = useState(initial ? initial.id : null);
+  const o = linked.find((x) => String(x.id) === oppId) || null;
+  const attachable = docs.filter((d) => !d.archived && (d.cat === "Resume" || d.cat === "Cover letter"));
+  const auto = useMemo(() => draftMessage({ c, o, purposes, custom, profile, attach }), [c, o, purposes, custom, profile, attach]);
+  const [body, setBody] = useState(initial ? initial.body : auto);
+  useEffect(() => { if (!edited) setBody(auto); }, [auto, edited]);
+  const tog = (arr, set, v) => set(arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+  const copy = () => {
+    try { navigator.clipboard.writeText(body).then(() => toast("Copied to clipboard"), () => toast("Couldn't copy. Select the text and copy it yourself.")); }
+    catch (e) { toast("Couldn't copy. Select the text and copy it yourself."); }
+  };
+  const store = (status) => {
+    const id = draftId || Date.now();
+    setDraftId(id);
+    onSaveDraft({ id, kind: "Referral message", refId: c.id, toName: c.name, about: o ? o.title : "", body, status });
+  };
+
+  return (
+    <div className="refpanel">
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <b>{initial ? "Edit your draft to " : "Reach out to "}{c.name}</b>
+        <button className="btn ghost small" onClick={onClose}>Close</button>
+      </div>
+      <label className="f" style={{ marginTop: 12 }}>What do you want from {/^(Dr\.|Prof\.|Ms\.|Mr\.|Mrs\.)/.test(c.name) ? c.name : c.name.split(" ")[0]}?</label>
+      <div className="skills">
+        {PURPOSES.map(([k, l]) => <button key={k} className={"chip" + (purposes.includes(k) ? " on" : "")} onClick={() => tog(purposes, setPurposes, k)}>{l}</button>)}
+      </div>
+      {linked.length > 0 && (
+        <>
+          <label className="f" style={{ marginTop: 12 }}>About which opportunity?</label>
+          <select className="field" value={oppId} onChange={(e) => setOppId(e.target.value)}>
+            <option value="">None in particular</option>
+            {linked.map((x) => <option key={x.id} value={x.id}>{x.title}</option>)}
+          </select>
+        </>
+      )}
+      <label className="f" style={{ marginTop: 12 }}>Your purpose, in your own words (optional)</label>
+      <textarea style={{ minHeight: 80 }} placeholder="e.g. I'd love to hear how you got into cybersecurity and whether the team hires community college transfers." value={custom} onChange={(e) => setCustom(e.target.value)} />
+      {attachable.length > 0 && (
+        <>
+          <label className="f" style={{ marginTop: 12 }}>Attach from your documents</label>
+          <div className="skills">
+            {attachable.map((d) => <button key={d.id} className={"chip" + (attach.includes(d.name) ? " on" : "")} onClick={() => tog(attach, setAttach, d.name)}>📎 {d.name}</button>)}
+          </div>
+        </>
+      )}
+      <label className="f" style={{ marginTop: 12 }}>Draft message{edited ? " (edited by you)" : " (auto-drafted from your choices)"}</label>
+      <textarea className="draft" value={body} onChange={(e) => { setBody(e.target.value); setEdited(true); }} />
+      <div className="org" style={{ marginTop: 6 }}>Mock note: nothing is sent. The real app would draft this with Claude and send it only after you confirm.</div>
+      <div className="row end">
+        {edited && <button className="btn ghost small" onClick={() => setEdited(false)}>↻ Redraft from my choices</button>}
+        <button className="btn ghost small" onClick={copy}>Copy</button>
+        <button className="btn ghost small" disabled={!body.trim()} onClick={() => { store("draft"); toast("Draft saved. Find it in the Drafts tab."); }}>Save draft</button>
+        <button className="btn gold small" disabled={!body.trim()} onClick={() => { store("sent"); onSent(); }}>Yes, send message</button>
+      </div>
+    </div>
+  );
+}
+
+const COMPANIES = [
+  { id: 1, name: "Sacramento Municipal Utility District", keys: ["sacramento municipal", "smud"], site: "", note: "Applying for the cybersecurity internship." },
+  { id: 2, name: "Kaiser Permanente", keys: ["kaiser"], site: "", note: "Data analyst intern posting. Check for more in spring." },
+  { id: 3, name: "Cosumnes River College", keys: ["cosumnes", "crc"], site: "", note: "MESA, TRIO and campus scholarships." },
+  { id: 4, name: "Hack the Capital", keys: ["hack the capital"], site: "", note: "Remote software fellowship." },
+  { id: 5, name: "UC Davis", keys: ["uc davis"], site: "", note: "Transfer pathway programs." },
+];
+const AFFILIATES = [
+  { id: 1, name: "Priya Shah", role: "Cybersecurity Team Lead", org: "Sacramento Municipal Utility District", companyId: 1, met: "CRC Career Fair, Oct 2026", note: "Said to email her before applying. Interested in my home network lab.", links: [1] },
+  { id: 2, name: "Marcus Lee", role: "Data Analyst", org: "Kaiser Permanente", companyId: 2, met: "LinkedIn coffee chat", note: "Offered to review my resume and give a referral.", links: [5] },
+  { id: 3, name: "Dr. Hernandez", role: "MESA Program Director", org: "Cosumnes River College", companyId: 3, met: "MESA orientation", note: "Runs the MESA transfer scholarship committee.", links: [2] },
+  { id: 4, name: "Jordan Kim", role: "Past fellow", org: "Hack the Capital", companyId: 4, met: "Sacramento hackathon", note: "Can share tips on the fellowship interview.", links: [3] },
+  { id: 5, name: "Ms. Patel", role: "Transfer Counselor", org: "UC Davis", companyId: 5, met: "Transfer workshop", note: "Knows the pathway fellowship staff.", links: [6] },
+];
+const PROFILE_SAMPLES = [
+  { name: "Jamie Torres", role: "University Recruiter", company: "Intel Folsom" },
+  { name: "Sam Okafor", role: "Engineering Manager", company: "Kaiser Permanente" },
+];
+
+function findCompany(companies, name) {
+  const n = (name || "").toLowerCase().trim();
+  if (!n) return null;
+  return companies.find((c) => !c.archived && (c.name.toLowerCase() === n || c.keys.some((k) => n.includes(k)))) || null;
+}
+function oppsAt(company, items) {
+  return items.filter((o) => !o.archived && company.keys.some((k) => (o.org + " " + o.title).toLowerCase().includes(k)));
+}
+
+function Affiliates({ items, contacts, setContacts, companies, setCompanies, docs, profile, drafts, onSaveDraft, toast }) {
+  const blank = { name: "", role: "", companyId: "", newCompany: "", saveCompany: true, met: "", note: "", links: [] };
+  const [adding, setAdding] = useState(false);
+  const [f, setF] = useState(blank);
+  const [q, setQ] = useState("");
+  const [showArch, setShowArch] = useState(false);
+  const [refOpen, setRefOpen] = useState(null);
+  const [refInit, setRefInit] = useState(null);
+  const [imode, setImode] = useState("link");
+  const [iinput, setIinput] = useState("");
+  const [ifile, setIfile] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [imported, setImported] = useState(false);
+  const active = items.filter((i) => !i.archived);
+  const activeCos = companies.filter((c) => !c.archived);
+  const opp = (id) => items.find((i) => i.id === id);
+  const upd = (id, fn) => setContacts(contacts.map((c) => (c.id === id ? fn(c) : c)));
+  const toggle = (id) => setF({ ...f, links: f.links.includes(id) ? f.links.filter((x) => x !== id) : [...f.links, id] });
+  const reset = () => { setF(blank); setIinput(""); setIfile(""); setImported(false); setAdding(false); };
+
+  const extract = () => {
+    setBusy(true);
+    setTimeout(() => {
+      const seed = (iinput + ifile).split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+      const p = PROFILE_SAMPLES[seed % PROFILE_SAMPLES.length];
+      const co = findCompany(companies, p.company);
+      setF((prev) => ({ ...prev, name: p.name, role: p.role, companyId: co ? String(co.id) : "__new", newCompany: co ? "" : p.company, met: imode === "link" ? "Profile link" : "Profile screenshot" }));
+      setImported(true); setBusy(false);
+    }, 1400);
+  };
+
+  const save = () => {
+    if (!f.name.trim()) return;
+    let co = f.companyId && f.companyId !== "__new" ? companies.find((c) => String(c.id) === f.companyId) : null;
+    const orgName = co ? co.name : f.newCompany.trim();
+    let cid = co ? co.id : null;
+    if (!co && orgName && f.saveCompany) {
+      const nc = { id: Date.now() + 1, name: orgName, keys: [orgName.toLowerCase()], site: "", note: "" };
+      setCompanies([nc, ...companies]); cid = nc.id;
+    }
+    setContacts([{ id: Date.now(), name: f.name.trim(), role: f.role, org: orgName, companyId: cid, met: f.met, note: f.note, links: f.links }, ...contacts]);
+    toast("Saved " + f.name.trim());
+    reset();
+  };
+  const saveCompanyFor = (c) => {
+    const nc = { id: Date.now(), name: c.org, keys: [c.org.toLowerCase()], site: "", note: "" };
+    setCompanies([nc, ...companies]);
+    setContacts(contacts.map((x) => (x.org === c.org && !x.companyId ? { ...x, companyId: nc.id } : x)));
+    toast("Saved " + c.org + " to your companies");
+  };
+  const shown = contacts.filter((c) => !!c.archived === showArch).filter((c) => (c.name + c.org + c.role).toLowerCase().includes(q.toLowerCase()));
+
+  return (
+    <>
+      <div className="top">
+        <div><h2>Affiliates</h2><p>People you've met, tied to a company and to the opportunities they can help with.</p></div>
+        <button className="btn gold" onClick={() => (adding ? reset() : setAdding(true))}>{adding ? "Close" : "＋ Add person"}</button>
+      </div>
+
+      {adding && (
+        <div className="item" style={{ marginBottom: 16 }}>
+          <b>New affiliate</b>
+
+          <div className="match" style={{ background: "var(--gold-soft)", borderColor: "#f3c58a" }}>
+            <div className="ai-badge" style={{ margin: "0 0 8px" }}>✨ Auto-fill from a profile</div>
+            <div className="tabs" style={{ margin: "0 0 10px" }}>
+              <button className={"tab" + (imode === "link" ? " on" : "")} onClick={() => setImode("link")}>Paste a link</button>
+              <button className={"tab" + (imode === "shot" ? " on" : "")} onClick={() => setImode("shot")}>Upload a screenshot</button>
+            </div>
+            {imode === "link"
+              ? <input className="field" placeholder="https://… link to their profile" value={iinput} onChange={(e) => setIinput(e.target.value)} />
+              : (
+                <label className="drop" style={{ display: "block", cursor: "pointer", padding: 18 }}>
+                  {ifile ? "📎 " + ifile : "Click to upload a screenshot of their profile"}
+                  <input type="file" accept="image/*" hidden onChange={(e) => setIfile(e.target.files[0]?.name || "")} />
+                </label>
+              )}
+            <div className="org" style={{ marginTop: 6 }}>Tip: screenshots work best for sites that need a login, like LinkedIn. Mock note: the extraction here is simulated.</div>
+            <div className="row end" style={{ marginTop: 10 }}>
+              <button className="btn gold small" disabled={busy || !(iinput || ifile)} onClick={extract}>{busy ? <><span className="spinner" /> Claude is reading…</> : "✨ Extract with Claude"}</button>
+            </div>
+            {imported && <div className="org" style={{ color: "var(--green)", fontWeight: 600 }}>Filled in below. Check it and edit anything that looks off.</div>}
+          </div>
+
+          <div className="grid2">
+            <div><label className="f">Name</label><input className="field" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></div>
+            <div><label className="f">Role</label><input className="field" placeholder="e.g. Recruiter" value={f.role} onChange={(e) => setF({ ...f, role: e.target.value })} /></div>
+            <div>
+              <label className="f">Company</label>
+              <select className="field" value={f.companyId} onChange={(e) => setF({ ...f, companyId: e.target.value })}>
+                <option value="">Choose a saved company…</option>
+                {activeCos.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                <option value="__new">＋ New company…</option>
+              </select>
+            </div>
+            <div><label className="f">How you met</label><input className="field" placeholder="e.g. Career fair" value={f.met} onChange={(e) => setF({ ...f, met: e.target.value })} /></div>
+            {f.companyId === "__new" && (
+              <div style={{ gridColumn: "1 / -1" }}>
+                <label className="f">New company name</label>
+                <input className="field" value={f.newCompany} onChange={(e) => setF({ ...f, newCompany: e.target.value })} />
+                <label className="checkrow" style={{ borderBottom: 0, paddingBottom: 0 }}><input type="checkbox" checked={f.saveCompany} onChange={() => setF({ ...f, saveCompany: !f.saveCompany })} /> <span>Save this company to my companies</span></label>
+              </div>
+            )}
+            <div style={{ gridColumn: "1 / -1" }}><label className="f">Notes</label><input className="field" value={f.note} onChange={(e) => setF({ ...f, note: e.target.value })} /></div>
+          </div>
+          <label className="f" style={{ marginTop: 14 }}>Link to opportunities</label>
+          <div className="skills">
+            {active.map((i) => (
+              <button key={i.id} className={"chip" + (f.links.includes(i.id) ? " on" : "")} onClick={() => toggle(i.id)}>{i.title}</button>
+            ))}
+          </div>
+          <div className="row end"><button className="btn ghost" onClick={reset}>Cancel</button><button className="btn gold" disabled={!f.name.trim()} onClick={save}>Save person</button></div>
+        </div>
+      )}
+
+      <div className="filters"><input className="search" placeholder="Search people, companies…" value={q} onChange={(e) => setQ(e.target.value)} /><button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({contacts.filter((c) => c.archived).length})</button></div>
+
+      <div className="list">
+        {shown.length === 0 && <div className="card"><div className="empty">{showArch ? "No one archived." : "No one found."}</div></div>}
+        {shown.map((c) => {
+          const free = active.filter((i) => !c.links.includes(i.id));
+          const co = companies.find((x) => x.id === c.companyId);
+          const suggested = co ? oppsAt(co, items).filter((o) => !c.links.includes(o.id)) : [];
+          return (
+            <div className="item" key={c.id}>
+              <div className="person">
+                <div className="avatar">{c.name[0]}</div>
+                <div style={{ flex: 1 }}>
+                  <b>{c.name}</b> <span className="org">{c.role}</span>
+                  <div style={{ marginTop: 4 }}>
+                    {c.org && <span className="tag">🏢 {c.org}</span>}
+                    {c.org && !co && <button className="btn ghost small" style={{ padding: "2px 10px" }} onClick={() => saveCompanyFor(c)}>＋ Save company</button>}
+                    {co && <span className="org">saved company</span>}
+                  </div>
+                  <div className="org" style={{ marginTop: 4 }}>Met: {c.met || "–"}{c.last ? " · Last reached out " + fmt(c.last) : ""}</div>
+                  {c.note && <div style={{ fontSize: 14, marginTop: 6 }}>{c.note}</div>}
+                  <div className="org" style={{ margin: "12px 0 6px", fontWeight: 600 }}>Linked opportunities</div>
+                  <div className="skills">
+                    {c.links.filter((id) => opp(id)).length === 0 && <span className="org">None yet.</span>}
+                    {c.links.map((id) => {
+                      const o = opp(id); if (!o) return null;
+                      const n = daysLeft(o.deadline);
+                      return (
+                        <span key={id} className="skill">{o.title} · <span className={"due " + dueClass(n)} style={{ padding: "1px 7px", fontSize: 11 }}>{dueText(n)}</span>
+                          <button aria-label="Unlink" onClick={() => upd(c.id, (x) => ({ ...x, links: x.links.filter((l) => l !== id) }))}>×</button></span>
+                      );
+                    })}
+                  </div>
+                  {suggested.length > 0 && (
+                    <div style={{ marginTop: 10 }}>
+                      <div className="org" style={{ marginBottom: 4 }}>Also at {co.name}:</div>
+                      <div className="skills">
+                        {suggested.map((o) => <button key={o.id} className="chip" onClick={() => upd(c.id, (x) => ({ ...x, links: [...x.links, o.id] }))}>＋ Link {o.title}</button>)}
+                      </div>
+                    </div>
+                  )}
+                  {drafts.filter((d) => d.refId === c.id && !d.archived).length > 0 && (
+                    <div style={{ marginTop: 10 }}>
+                      <div className="org" style={{ marginBottom: 4 }}>Your messages to {c.name.split(" ")[0]}: click one to edit</div>
+                      <div className="skills">
+                        {drafts.filter((d) => d.refId === c.id && !d.archived).map((d) => (
+                          <button key={d.id} className="chip" onClick={() => { setRefInit(d); setRefOpen(c.id); }}>📝 {d.status === "sent" ? "Sent" : "Draft"} · {fmt(d.updated)}</button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="row" style={{ marginTop: 12, flexWrap: "wrap" }}>
+                    <select className="status" value="" onChange={(e) => e.target.value && upd(c.id, (x) => ({ ...x, links: [...x.links, +e.target.value] }))}>
+                      <option value="">＋ Link an opportunity…</option>
+                      {free.map((i) => <option key={i.id} value={i.id}>{i.title}</option>)}
+                    </select>
+                    <button className={"btn small " + (refOpen === c.id ? "gold" : "ghost")} onClick={() => { setRefInit(null); setRefOpen(refOpen === c.id && !refInit ? null : c.id); }}>✉️ Ask for referral</button>
+                    <RowActions archived={!!c.archived} onArchive={() => { upd(c.id, (x) => ({ ...x, archived: true })); toast("Archived " + c.name); }} onRestore={() => upd(c.id, (x) => ({ ...x, archived: false }))} onDelete={() => { setContacts(contacts.filter((x) => x.id !== c.id)); toast("🗑️ Deleted " + c.name); }} />
+                  </div>
+                  {refOpen === c.id && <ReferralPanel key={refInit ? refInit.id : "new"} initial={refInit} onSaveDraft={onSaveDraft} c={c} items={items} docs={docs} profile={profile} toast={toast} onClose={() => setRefOpen(null)} onSent={() => { upd(c.id, (x) => ({ ...x, last: iso(TODAY) })); toast("✅ Message to " + c.name + " sent (mock)"); setRefOpen(null); }} />}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function Companies({ items, contacts, setContacts, companies, setCompanies, toast }) {
+  const [adding, setAdding] = useState(false);
+  const [nf, setNf] = useState({ name: "", site: "", note: "" });
+  const [q, setQ] = useState("");
+  const [showArch, setShowArch] = useState(false);
+  const upd = (id, v) => setCompanies(companies.map((c) => (c.id === id ? { ...c, ...v } : c)));
+  const save = () => {
+    const name = nf.name.trim(); if (!name) return;
+    setCompanies([{ id: Date.now(), name, keys: [name.toLowerCase()], site: nf.site.trim(), note: nf.note }, ...companies]);
+    toast("Saved " + name); setNf({ name: "", site: "", note: "" }); setAdding(false);
+  };
+  const remove = (c) => {
+    setCompanies(companies.filter((x) => x.id !== c.id));
+    setContacts(contacts.map((p) => (p.companyId === c.id ? { ...p, companyId: null } : p)));
+    toast("🗑️ Deleted " + c.name);
+  };
+  const shown = companies.filter((c) => !!c.archived === showArch).filter((c) => c.name.toLowerCase().includes(q.toLowerCase()));
+
+  return (
+    <>
+      <div className="top">
+        <div><h2>Companies</h2><p>Places you want to work. See who you know there and what's open.</p></div>
+        <button className="btn gold" onClick={() => setAdding(!adding)}>{adding ? "Close" : "＋ Save a company"}</button>
+      </div>
+      {adding && (
+        <div className="item" style={{ marginBottom: 16 }}>
+          <div className="grid2">
+            <div><label className="f">Company name</label><input className="field" value={nf.name} onChange={(e) => setNf({ ...nf, name: e.target.value })} /></div>
+            <div><label className="f">Website or careers page (optional)</label><input className="field" placeholder="https://…" value={nf.site} onChange={(e) => setNf({ ...nf, site: e.target.value })} /></div>
+            <div style={{ gridColumn: "1 / -1" }}><label className="f">Notes</label><input className="field" value={nf.note} onChange={(e) => setNf({ ...nf, note: e.target.value })} /></div>
+          </div>
+          <div className="row end"><button className="btn gold" disabled={!nf.name.trim()} onClick={save}>Save company</button></div>
+        </div>
+      )}
+      <div className="filters"><input className="search" placeholder="Search companies…" value={q} onChange={(e) => setQ(e.target.value)} /><button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({companies.filter((c) => c.archived).length})</button></div>
+      <div className="list">
+        {shown.length === 0 && <div className="card"><div className="empty">{showArch ? "No companies archived." : "No companies saved yet."}</div></div>}
+        {shown.map((c) => {
+          const people = contacts.filter((p) => p.companyId === c.id && !p.archived);
+          const opps = oppsAt(c, items);
+          return (
+            <div className="item" key={c.id}>
+              <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div><h4>🏢 {c.name}</h4>{c.site && <div className="org"><a href={c.site} target="_blank" rel="noreferrer">{c.site}</a></div>}{c.note && <div style={{ fontSize: 14, marginTop: 4 }}>{c.note}</div>}</div>
+                <RowActions archived={!!c.archived} onArchive={() => { upd(c.id, { archived: true }); toast("Archived " + c.name); }} onRestore={() => upd(c.id, { archived: false })} onDelete={() => remove(c)} />
+              </div>
+              <div className="two" style={{ marginTop: 12 }}>
+                <div>
+                  <div className="org" style={{ fontWeight: 600, marginBottom: 6 }}>People you know</div>
+                  <div className="skills">{people.length === 0 ? <span className="org">No one yet.</span> : people.map((p) => <span key={p.id} className="skill" style={{ paddingRight: 11 }}>{p.name}</span>)}</div>
+                </div>
+                <div>
+                  <div className="org" style={{ fontWeight: 600, marginBottom: 6 }}>Opportunities</div>
+                  <div className="skills">{opps.length === 0 ? <span className="org">None saved.</span> : opps.map((o) => { const n = daysLeft(o.deadline); return <span key={o.id} className="skill" style={{ paddingRight: 11 }}>{o.title} · <span className={"due " + dueClass(n)} style={{ padding: "1px 7px", fontSize: 11 }}>{dueText(n)}</span></span>; })}</div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function Reminders({ items, toast }) {
+  const list = items.filter((i) => i.status !== "Submitted" && !i.archived).sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+  return (
+    <>
+      <div className="top"><div><h2>Deadline reminders</h2><p>Five nudges per opportunity, sent to your email and calendar.</p></div></div>
+      <div className="list">
+        {list.length === 0 && <div className="card"><div className="empty">No reminders yet. Add an opportunity first.</div></div>}
+        {list.map((i) => {
+          const n = daysLeft(i.deadline);
+          const nextIdx = REMINDERS.map(([, d]) => d).findIndex((d) => n >= d);
+          return (
+            <div className="item" key={i.id}>
+              <div className="row" style={{ justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div><h4>{i.title}</h4><div className="org">{i.org} · due {fmt(i.deadline)}</div></div>
+                <div className="rowact" style={{ marginTop: 0 }}>
+                  {hasLink(i.link) && <a className="btn gold small" href={i.link} target="_blank" rel="noreferrer">Apply ↗</a>}
+                  <button className="btn ghost small" onClick={() => toast("📧 Test reminder sent for “" + i.title + "”")}>Send test reminder</button>
+                </div>
+              </div>
+              <div className="timeline">
+                {REMINDERS.map(([label, d], idx) => {
+                  const when = new Date(i.deadline + "T00:00:00"); when.setDate(when.getDate() - d);
+                  const past = when < TODAY;
+                  return <span key={label} className={"tl" + (past ? " done" : idx === nextIdx ? " next" : "")}>{label} · {iso(when).slice(5)}</span>;
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function Recommenders({ items, people, setPeople, onSaveDraft, toast }) {
+  const open = items.filter((i) => i.status !== "Submitted" && !i.archived);
+  const [recBody, setRecBody] = useState("");
+  const [recDraftId, setRecDraftId] = useState(null);
+  const [showArch, setShowArch] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [nf, setNf] = useState({ name: "", role: "", note: "", tags: [] });
+  const activePeople = people.filter((p) => !p.archived);
+  const shownPeople = people.filter((p) => !!p.archived === showArch);
+  const updP = (id, v) => setPeople(people.map((p) => (p.id === id ? { ...p, ...v } : p)));
+  const [sel, setSel] = useState(open[0]?.id);
+  const [draft, setDraft] = useState(false);
+  const opp = open.find((i) => i.id === sel) || open[0];
+  const score = (p) => opp ? p.tags.filter((t) => t === opp.major || t === opp.type || t === "Any").length : 0;
+  const best = opp && activePeople.length ? [...activePeople].sort((a, b) => score(b) - score(a))[0] : null;
+  const email = opp && best ? `Hi ${best.name},\n\nI hope you're doing well! I'm applying for the ${opp.title} at ${opp.org} (deadline ${fmt(opp.deadline)}), and I'd be grateful if you'd write a letter of recommendation. ${best.note.split(".")[0]}, so I thought you'd be a great fit to speak to my work.\n\nI can send my resume and the posting. Thank you so much!\n\n– Your name` : "";
+
+  return (
+    <>
+      <div className="top"><div><h2>Letter of recommendation</h2><p>Claude picks the best person to ask. You approve before anything is sent.</p></div></div>
+      <div className="two">
+        <div>
+          <div className="item">
+            <label className="f">Pick an opportunity</label>
+            <select className="field" value={opp ? opp.id : ""} onChange={(e) => { setSel(+e.target.value); setDraft(false); }}>
+              {open.map((i) => <option key={i.id} value={i.id}>{i.title}</option>)}
+            </select>
+            {best && (
+              <div className="match">
+                <div className="ai-badge" style={{ margin: "0 0 6px" }}>✨ Best match</div>
+                <div className="person"><div className="avatar">{best.name[0]}</div><div><b>{best.name}</b><div className="org">{best.role}</div></div></div>
+                <div style={{ marginTop: 8, fontSize: 14 }}>{best.note}</div>
+                {!draft && <button className="btn gold small" style={{ marginTop: 12 }} onClick={() => { setRecBody(email); setRecDraftId(null); setDraft(true); }}>Draft request email</button>}
+              </div>
+            )}
+            {draft && (
+              <>
+                <label className="f" style={{ marginTop: 12 }}>Your message (click to edit)</label>
+                <textarea className="draft" value={recBody} onChange={(e) => setRecBody(e.target.value)} />
+                <div className="row end" style={{ flexWrap: "wrap" }}>
+                  <button className="btn ghost small" onClick={() => setDraft(false)}>Cancel</button>
+                  <button className="btn ghost small" disabled={!recBody.trim()} onClick={() => { const id = recDraftId || Date.now(); setRecDraftId(id); onSaveDraft({ id, kind: "Letter of rec request", refId: null, toName: best.name, about: opp ? opp.title : "", body: recBody, status: "draft" }); toast("Draft saved. Find it in the Drafts tab."); }}>Save draft</button>
+                  <button className="btn gold small" disabled={!recBody.trim()} onClick={() => { const id = recDraftId || Date.now(); onSaveDraft({ id, kind: "Letter of rec request", refId: null, toName: best.name, about: opp ? opp.title : "", body: recBody, status: "sent" }); toast("✅ Request sent to " + best.name + " (mock)"); setDraft(false); }}>Yes, send request</button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+        <div className="list">
+          <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
+            <b>Your recommenders</b>
+            <span className="row">
+              <button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({people.filter((p) => p.archived).length})</button>
+              <button className="btn gold small" onClick={() => setAdding(!adding)}>{adding ? "Close" : "＋ Add"}</button>
+            </span>
+          </div>
+          {adding && (
+            <div className="item">
+              <label className="f">Name</label><input className="field" value={nf.name} onChange={(e) => setNf({ ...nf, name: e.target.value })} />
+              <label className="f" style={{ marginTop: 10 }}>Role</label><input className="field" placeholder="e.g. Math instructor, CRC" value={nf.role} onChange={(e) => setNf({ ...nf, role: e.target.value })} />
+              <label className="f" style={{ marginTop: 10 }}>Background (how they know you)</label><input className="field" value={nf.note} onChange={(e) => setNf({ ...nf, note: e.target.value })} />
+              <label className="f" style={{ marginTop: 10 }}>Good for</label>
+              <div className="skills">
+                {["Internship", "Scholarship", "Fellowship"].map((t) => (
+                  <button key={t} className={"chip" + (nf.tags.includes(t) ? " on" : "")} onClick={() => setNf({ ...nf, tags: nf.tags.includes(t) ? nf.tags.filter((x) => x !== t) : [...nf.tags, t] })}>{t}</button>
+                ))}
+              </div>
+              <div className="row end"><button className="btn gold small" disabled={!nf.name.trim()} onClick={() => { setPeople([{ id: Date.now(), name: nf.name.trim(), role: nf.role, note: nf.note, tags: [...nf.tags, "Any"] }, ...people]); setNf({ name: "", role: "", note: "", tags: [] }); setAdding(false); toast("Saved " + nf.name.trim()); }}>Save recommender</button></div>
+            </div>
+          )}
+          {shownPeople.length === 0 && <div className="card"><div className="empty">{showArch ? "No one archived." : "No recommenders saved."}</div></div>}
+          {shownPeople.map((p) => (
+            <div className="item" key={p.id}>
+              <div className="person"><div className="avatar">{p.name[0]}</div>
+                <div style={{ flex: 1 }}><b>{p.name}</b><div className="org">{p.role}</div><div style={{ fontSize: 13, marginTop: 6 }}>{p.note}</div>
+                  <div style={{ marginTop: 10 }}><RowActions archived={!!p.archived} onArchive={() => { updP(p.id, { archived: true }); toast("Archived " + p.name); }} onRestore={() => updP(p.id, { archived: false })} onDelete={() => { setPeople(people.filter((x) => x.id !== p.id)); toast("🗑️ Deleted " + p.name); }} /></div>
+                </div></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ---------- find internships (live listings from HireBase through the SacPath server) ---------- */
+const SAMPLE_JOBS = [
+  { id: "sample-1", title: "IT Support Intern", org: "Sample Company (demo data)", link: "https://www.example.com/it-intern", location: "Sacramento, CA", city: "Sacramento", remote: false, jobType: "Internship", pay: 22, posted: null },
+  { id: "sample-2", title: "Junior Data Analyst Intern", org: "Sample Company (demo data)", link: "https://www.example.com/data-intern", location: "Remote", city: null, remote: true, jobType: "Internship", pay: 25, posted: null },
+];
+function FindJobs({ profile, prefs, items, onAdd, goResume }) {
+  const [title, setTitle] = useState("Intern");
+  const [skills, setSkills] = useState(profile ? profile.skills.filter((s) => SKILL_MAP[s] && !["leadership", "teamwork", "community", "writing"].includes(s)).slice(0, 3).join(", ") : "");
+  const [city, setCity] = useState((prefs.places && prefs.places[0]) || "Sacramento");
+  const [remote, setRemote] = useState(false);
+  const [state, setState] = useState({ phase: "idle", jobs: [], error: "", cached: false, sample: false });
+  const saved = new Set(items.map((i) => i.hbId).filter(Boolean));
+  const split = (v) => v.split(",").map((x) => x.trim()).filter(Boolean);
+
+  const search = async () => {
+    setState({ phase: "loading", jobs: [], error: "", cached: false, sample: false });
+    try {
+      const r = await fetch("/api/jobs/search", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ titles: split(title), keywords: split(skills), remote, city: remote ? "" : city.trim(), limit: 15 }),
+      });
+      let data = null;
+      try { data = await r.json(); } catch (e) { /* not JSON, so we are not talking to the SacPath server */ }
+      if (!data) throw new Error("no-server");
+      if (!r.ok) { setState({ phase: "error", jobs: [], error: data.error || "Search failed (" + r.status + ").", cached: false, sample: false }); return; }
+      setState({ phase: "done", jobs: data.jobs || [], error: "", cached: !!data.cached, sample: false });
+    } catch (e) {
+      setState({ phase: "error", jobs: [], error: "no-server", cached: false, sample: false });
+    }
+  };
+
+  return (
+    <>
+      <div className="top"><div><h2>Find internships</h2><p>Live listings from HireBase. Add the ones you like to your tracker.</p></div></div>
+      {!profile && <div className="banner">👤 Add your resume in your profile and we will fill in your skills for you. <button className="link" onClick={goResume}>Go to profile →</button></div>}
+      <div className="card" style={{ padding: 16, marginBottom: 14 }}>
+        <div className="grid2">
+          <div><label className="f">Job title</label><input className="field" placeholder="e.g. IT Intern, Data Analyst Intern" value={title} onChange={(e) => setTitle(e.target.value)} /></div>
+          <div><label className="f">Skills (optional)</label><input className="field" placeholder="python, sql, networking" value={skills} onChange={(e) => setSkills(e.target.value)} /></div>
+          <div><label className="f">City</label><input className="field" disabled={remote} value={city} onChange={(e) => setCity(e.target.value)} /></div>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: 10 }}>
+            <button className={"chip" + (remote ? " on" : "")} onClick={() => setRemote(!remote)}>🏠 Remote only</button>
+            <button className="btn gold" disabled={state.phase === "loading" || !title.trim()} onClick={search}>
+              {state.phase === "loading" ? <><span className="spinner" /> Searching…</> : "🔎 Search"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {state.phase === "error" && (
+        <div className="banner" style={{ background: "var(--red-soft)", color: "var(--red)" }}>
+          {state.error === "no-server" ? (
+            <>Can't reach the SacPath server, so live search is off. Run <b>npm start</b> and open <b>http://localhost:3000</b> (opening the file directly or a preview won't work). <button className="link" onClick={() => setState({ phase: "done", jobs: SAMPLE_JOBS, error: "", cached: false, sample: true })}>Show sample results instead</button></>
+          ) : state.error}
+        </div>
+      )}
+      {state.phase === "done" && state.sample && <div className="banner">These are made-up sample listings so you can try the page without the server. Real search needs the server running.</div>}
+      {state.phase === "done" && !state.sample && <div className="banner ok">{state.jobs.length} listings from HireBase{state.cached ? " (saved from a search a few minutes ago)" : ""}. HireBase doesn't list application deadlines, so we set a check-in date 30 days out. You can change the status any time.</div>}
+
+      {state.phase === "done" && (
+        <div className="card">
+          {state.jobs.length === 0 ? <div className="empty">No listings matched. Try a broader title like "Intern", fewer skills, or a nearby city.</div> : (
+            <table>
+              <thead><tr><th>Opportunity</th><th>Where</th><th>Pay</th><th></th></tr></thead>
+              <tbody>
+                {state.jobs.map((j) => (
+                  <tr key={j.id}>
+                    <td>
+                      <div className="title">{j.title}</div>
+                      <div className="org">{j.org}{j.jobType ? " · " + j.jobType : ""}{j.posted ? " · posted " + String(j.posted).slice(0, 10) : ""}</div>
+                      {hasLink(j.link) && <a className="link" href={j.link} target="_blank" rel="noopener noreferrer">View posting ↗</a>}
+                    </td>
+                    <td><span className="tag">{j.remote ? "Remote" : j.location || "See posting"}</span></td>
+                    <td>{j.pay != null ? "$" + j.pay + "/hr" : <span className="org">Not listed</span>}</td>
+                    <td>{saved.has(j.id) ? <span className="org">✓ In tracker</span> : <button className="btn small" onClick={() => onAdd(j, skills)}>＋ Add to tracker</button>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+      {state.phase === "idle" && <div className="card"><div className="empty">Pick a title and city, then press Search.</div></div>}
+    </>
+  );
+}
+
+function App() {
+  const [tab, setTab] = useState("tracker");
+  const [items, setItems] = useState(SEED);
+  const [adding, setAdding] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [contacts, setContacts] = useState(AFFILIATES);
+  const [recs, setRecs] = useState(PEOPLE);
+  const [companies, setCompanies] = useState(COMPANIES);
+  const [docs, setDocs] = useState(DOCS);
+  const [drafts, setDrafts] = useState(DRAFTS);
+  const upsertDraft = (d) => setDrafts((ds) => (ds.some((x) => x.id === d.id) ? ds.map((x) => (x.id === d.id ? { ...x, ...d, updated: iso(TODAY) } : x)) : [{ created: iso(TODAY), updated: iso(TODAY), ...d }, ...ds]));
+  const [prefs, setPrefs] = useState(DEMO_PREFS);
+  const [msg, setMsg] = useState("");
+  const toast = (m) => { setMsg(m); setTimeout(() => setMsg(""), 2600); };
+  const save = (d, saveCo) => {
+    if (saveCo && !findCompany(companies, d.org)) setCompanies([{ id: Date.now() + 1, name: d.org, keys: [d.org.toLowerCase()], site: "", note: "" }, ...companies]);
+    setItems([{ ...d, id: Date.now(), status: "Saved" }, ...items]); setAdding(false); toast("Saved! 5 reminders scheduled."); setTab("tracker"); };
+  const addFound = (j, skillText) => {
+    setItems((its) => [{
+      id: Date.now(), hbId: j.id, title: j.title, org: j.org, type: "Internship", deadline: plus(30),
+      location: j.location || "See posting", city: j.city || "", remote: !!j.remote, near: false, major: "Any",
+      kw: detectSkills(j.title + " " + (skillText || "")), season: null, hours: null, pay: j.pay ?? null, lor: 0, essay: false,
+      status: "Saved", source: "HireBase", link: j.link || "",
+    }, ...its]);
+    toast("Added to your tracker.");
+  };
+  const deleteOpp = (id) => {
+    setItems((its) => its.filter((i) => i.id !== id));
+    setContacts((cs) => cs.map((c) => ({ ...c, links: c.links.filter((l) => l !== id) })));
+    toast("🗑️ Opportunity deleted.");
+  };
+  const NAV = [["tracker", "📋", "Tracker", items.filter((i) => !i.archived).length], ["find", "🔎", "Find internships", null], ["affiliates", "🤝", "Affiliates", contacts.filter((c) => !c.archived).length], ["companies", "🏢", "Companies", companies.filter((c) => !c.archived).length], ["resume", "👤", "Profile", null], ["reminders", "⏰", "Reminders", null], ["recs", "✉️", "Recommenders", recs.filter((r) => !r.archived).length], ["drafts", "📝", "Drafts", drafts.filter((d) => !d.archived && d.status === "draft").length]];
+
+  return (
+    <div className="app">
+      <aside className="side">
+        <div className="brand"><div className="brand-mark">S</div><h1>SacPath</h1></div>
+        {NAV.map(([k, ic, l, c]) => (
+          <button key={k} className={"nav" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>
+            <span>{ic}</span>{l}{c != null && <span className="count">{c}</span>}
+          </button>
+        ))}
+        <div className="side-foot">No account or login needed. CRC Hacks 2026 prototype. Find internships uses live HireBase listings when the server is running; Smart Add is still simulated.</div>
+      </aside>
+      <main className="main">
+        {tab === "tracker" && <Tracker items={items} setItems={setItems} openAdd={() => setAdding(true)} profile={profile} goResume={() => setTab("resume")} contacts={contacts} prefs={prefs} onDelete={deleteOpp} />}
+        {tab === "find" && <FindJobs profile={profile} prefs={prefs} items={items} onAdd={addFound} goResume={() => setTab("resume")} />}
+        {tab === "affiliates" && <Affiliates items={items} contacts={contacts} setContacts={setContacts} companies={companies} setCompanies={setCompanies} docs={docs} profile={profile} drafts={drafts} onSaveDraft={upsertDraft} toast={toast} />}
+        {tab === "companies" && <Companies items={items} contacts={contacts} setContacts={setContacts} companies={companies} setCompanies={setCompanies} toast={toast} />}
+        {tab === "resume" && <ResumeTab profile={profile} setProfile={setProfile} toast={toast} goTracker={() => setTab("tracker")} prefs={prefs} setPrefs={setPrefs} items={items.filter((i) => !i.archived)} docs={docs} setDocs={setDocs} />}
+        {tab === "reminders" && <Reminders items={items} toast={toast} />}
+        {tab === "recs" && <Recommenders items={items} people={recs} setPeople={setRecs} onSaveDraft={upsertDraft} toast={toast} />}
+        {tab === "drafts" && <Drafts drafts={drafts} setDrafts={setDrafts} toast={toast} />}
+      </main>
+      {adding && <SmartAdd onClose={() => setAdding(false)} onSave={save} companies={companies} />}
+      <Toast msg={msg} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
