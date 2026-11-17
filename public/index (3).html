@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>SacPath – Mock App</title>
+<title>SacPath</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20viewBox%3D%220%200%2040%2040%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%2211%22%20fill%3D%22%23f9a84d%22/%3E%3Cpath%20d%3D%22M27%2011C27%205.5%2013%205.5%2013%2013C13%2020.5%2027%2019.5%2027%2027C27%2034.5%2013%2034.5%2013%2029%22%20fill%3D%22none%22%20stroke%3D%22%230b2548%22%20stroke-width%3D%223.6%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2227%22%20cy%3D%2211%22%20r%3D%223.2%22%20fill%3D%22%230b2548%22/%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2229%22%20r%3D%223.2%22%20fill%3D%22%23fff%22%20stroke%3D%22%230b2548%22%20stroke-width%3D%222%22/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
@@ -36,7 +37,7 @@
   .app { display: grid; grid-template-columns: 230px 1fr; min-height: 100vh; }
   .side { background: var(--ink); color: #f4f5fa; padding: 24px 16px; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; }
   .brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 18px; }
-  .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--gold); color: var(--ink); display: grid; place-items: center; font-family: 'Fraunces', serif; font-weight: 700; font-size: 18px; }
+  .brand-mark { width: 36px; height: 36px; display: block; }
   .brand h1 { font-size: 21px; color: #fff; }
   .nav { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; border: 0; background: transparent; color: #d3e6ee; text-align: left; font-weight: 500; width: 100%; }
   .nav:hover { background: rgba(255,255,255,0.07); color: #fff; }
@@ -45,7 +46,7 @@
   .nav.on .count { background: rgba(31,42,55,0.15); }
   .side-foot { margin-top: auto; font-size: 12px; color: #8fb0c0; padding: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
 
-  .main { padding: 28px 36px 60px; max-width: 1180px; }
+  .main { padding: 28px 36px 60px; max-width: 1440px; }
   .top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
   .top h2 { font-size: 30px; }
   .top p { margin: 4px 0 0; color: var(--muted); }
@@ -167,6 +168,66 @@
   .checkrow.all { padding-top: 4px; }
   .checkrow input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--ink); }
 
+
+  /* layout with CRC rail */
+  .withrail { display: grid; grid-template-columns: minmax(0, 1fr) 270px; gap: 24px; align-items: start; }
+  .rail { display: grid; gap: 14px; position: sticky; top: 20px; }
+  .rail-h { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .ad { display: block; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--gold); border-radius: var(--radius); padding: 14px 16px; box-shadow: 0 1px 3px rgba(11,37,72,0.08); }
+  .ad:hover { border-color: var(--gold); }
+  .ad.b2 { border-top-color: var(--green); }
+  .ad.b3 { border-top-color: var(--ink); }
+  .ad b { display: block; font-size: 15px; margin: 2px 0 4px; }
+  .ad p { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+  .ad .cta { font-size: 13px; font-weight: 700; color: var(--green); }
+  .adtag { font-size: 11px; font-weight: 700; color: var(--muted); background: #eef5f6; padding: 2px 8px; border-radius: 99px; }
+  .rail-foot { font-size: 11px; color: var(--muted); text-align: center; }
+
+  /* tidier tracker */
+  th { white-space: nowrap; }
+  td:last-child { min-width: 215px; }
+  .tlink { color: var(--ink); text-decoration: none; }
+  .tlink:hover { text-decoration: underline; text-decoration-color: var(--gold); text-underline-offset: 3px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .tags .tag { margin: 0; }
+  .tools { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+  .tools .rowact { margin: 0; }
+  .searchrow { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .searchrow .search { flex: 1 1 260px; }
+  .more { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 14px 2px; margin-bottom: 14px; }
+  .online { margin-bottom: 16px; border-color: var(--gold); }
+  .onhead { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--gold-soft); }
+  .onhead .grow { flex: 1; }
+  .frow { display: flex; gap: 12px; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+  .frow .meta { min-width: 0; flex: 1 1 260px; }
+
+
+  .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .seg { display: inline-flex; gap: 4px; padding: 4px; background: #e6f1f2; border-radius: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .seg button { border: 0; background: transparent; padding: 8px 16px; border-radius: 9px; font-weight: 600; color: var(--muted); display: inline-flex; gap: 8px; align-items: center; }
+  .seg button:hover { color: var(--ink); }
+  .seg button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(11,37,72,0.15); }
+  .seg .n { font-size: 12px; background: var(--gold-soft); color: #9a4f00; padding: 0 7px; border-radius: 99px; }
+  .rail select, .rail input.field { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; background: #fff; font-size: 14px; }
+  .schoolpick { display: grid; gap: 6px; }
+
+  /* answers */
+  .acard { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; box-shadow: 0 1px 3px rgba(11,37,72,0.08); }
+  .acard.ready { border-left: 4px solid var(--green); }
+  .ahead { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 10px; }
+  .qinput { font-weight: 600; margin-bottom: 8px; }
+  .afoot { display: flex; gap: 8px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+  .afoot .grow { flex: 1; }
+  .ready-lbl { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .ready-lbl input { accent-color: var(--green); width: 16px; height: 16px; }
+
+  @media (max-width: 1180px) {
+    .withrail { grid-template-columns: 1fr; }
+    .rail { position: static; grid-template-columns: repeat(3, 1fr); }
+    .rail-h, .rail-foot { grid-column: 1 / -1; }
+  }
+  @media (max-width: 860px) { .rail { grid-template-columns: 1fr; } }
+
   @media (max-width: 860px) {
     .app { grid-template-columns: 1fr; }
     .side { position: static; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px; }
@@ -218,6 +279,7 @@ const SAMPLES = [
 ];
 const SAMPLE_TEXT = "Dream Big Transfer Scholarship – Sacramento Region Community Foundation. Open to California community college students planning to transfer. Award: $2,500. Apply online by " + fmt(plus(21)) + ". Requires a 500-word essay and one letter of recommendation.";
 
+const LOGO = <svg className="brand-mark" viewBox="0 0 40 40" role="img" aria-label="SacPath logo"><rect width="40" height="40" rx="11" fill="#f9a84d" /><path d="M27 11C27 5.5 13 5.5 13 13C13 20.5 27 19.5 27 27C27 34.5 13 34.5 13 29" fill="none" stroke="#0b2548" strokeWidth="3.6" strokeLinecap="round" /><circle cx="27" cy="11" r="3.2" fill="#0b2548" /><circle cx="13" cy="29" r="3.2" fill="#fff" stroke="#0b2548" strokeWidth="2" /></svg>;
 /* ---------- small components ---------- */
 function Toast({ msg }) { return msg ? <div className="toast">{msg}</div> : null; }
 
@@ -630,7 +692,72 @@ function sortVal(o, key) {
   return o.title.toLowerCase();
 }
 
-function Tracker({ items, setItems, openAdd, profile, goResume, contacts, prefs, onDelete }) {
+const SAMPLE_JOBS = [
+  { id: "sample-1", title: "IT Support Intern", org: "Sample Company (demo data)", link: "https://www.example.com/it-intern", location: "Sacramento, CA", city: "Sacramento", remote: false, jobType: "Internship", pay: 22, posted: null },
+  { id: "sample-2", title: "Junior Data Analyst Intern", org: "Sample Company (demo data)", link: "https://www.example.com/data-intern", location: "Remote", city: null, remote: true, jobType: "Internship", pay: 25, posted: null },
+];
+
+/* Announcements space. The text here is sample content; a real feed (RSS or an API) can replace it. */
+const CRC_ADS = [
+  { t: "MESA Program", d: "Support for STEM students, from study groups to transfer help." },
+  { t: "TRIO Student Support", d: "Advising and support for first-generation students." },
+  { t: "Career & Transfer Help", d: "Get help with resumes, interviews, and transfer plans." },
+];
+const GENERIC_ADS = [
+  { t: "Career Center", d: "Resume help, job leads, and interview practice." },
+  { t: "Scholarships & Aid", d: "Find financial aid and scholarship deadlines." },
+  { t: "Student Events", d: "Workshops, clubs, and events on campus." },
+];
+const SCHOOLS = [
+  { id: "crc", name: "Cosumnes River College", short: "CRC", url: "https://crc.losrios.edu/", ads: CRC_ADS },
+  { id: "scc", name: "Sacramento City College", short: "SCC", url: "https://scc.losrios.edu/" },
+  { id: "arc", name: "American River College", short: "ARC", url: "https://arc.losrios.edu/" },
+  { id: "flc", name: "Folsom Lake College", short: "FLC", url: "https://flc.losrios.edu/" },
+  { id: "ucd", name: "UC Davis", short: "UC Davis", url: "https://www.ucdavis.edu/" },
+  { id: "csus", name: "Sacramento State", short: "Sac State", url: "https://www.csus.edu/" },
+];
+function SchoolRail({ school, setSchool }) {
+  const known = SCHOOLS.find((x) => x.id === school.id);
+  const name = known ? known.name : school.custom.trim();
+  const ads = known && known.ads ? known.ads : GENERIC_ADS;
+  const href = known ? known.url : "https://www.google.com/search?q=" + encodeURIComponent(name + " student events announcements");
+  const tag = (known ? known.short : "Your school") + " · Sample";
+  return (
+    <aside className="rail" aria-label="School announcements">
+      <div className="rail-h">{name ? "From " + name : "Your school"}</div>
+      <div className="schoolpick">
+        <select aria-label="Your school" value={school.id} onChange={(e) => setSchool({ ...school, id: e.target.value })}>
+          {SCHOOLS.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
+          <option value="other">Another school…</option>
+        </select>
+        {school.id === "other" && <input className="field" placeholder="Type your school's name" value={school.custom} onChange={(e) => setSchool({ ...school, custom: e.target.value })} />}
+      </div>
+      {name && ads.map((a, n) => (
+        <a key={a.t} className={"ad b" + (n + 1)} href={href} target="_blank" rel="noopener noreferrer">
+          <span className="adtag">{tag}</span>
+          <b>{a.t}</b>
+          <p>{a.d}</p>
+          <span className="cta">{known ? "Visit " + known.short : "Search events"} ↗</span>
+        </a>
+      ))}
+      <div className="rail-foot">Sample content. Pick your school to see its announcements.</div>
+    </aside>
+  );
+}
+
+function RowTools({ item, patch, onStart, count, goAnswers, onDelete }) {
+  const [more, setMore] = useState(false);
+  return (
+    <div className="tools">
+      <ApplyLink key={item.id + ":" + (item.link || "")} item={item} onSave={(link) => patch(item.id, { link })} onStart={onStart} />
+      <button className="btn ghost small" title="Your saved answers for this application" onClick={() => goAnswers(item.id)}>📄 {count > 0 ? count : "Answers"}</button>
+      <button className="btn ghost small" aria-label="More actions" aria-expanded={more} onClick={() => setMore(!more)}>⋯</button>
+      {more && <RowActions archived={!!item.archived} onArchive={() => patch(item.id, { archived: true })} onRestore={() => patch(item.id, { archived: false })} onDelete={() => onDelete(item.id)} />}
+    </div>
+  );
+}
+
+function Tracker({ items, setItems, openAdd, profile, goResume, contacts, prefs, onDelete, onAddFound, answers, goAnswers, school, setSchool }) {
   const [q, setQ] = useState("");
   const [type, setType] = useState("All");
   const [flags, setFlags] = useState({ remote: false, match: false, fits: false });
@@ -642,9 +769,34 @@ function Tracker({ items, setItems, openAdd, profile, goResume, contacts, prefs,
   const [seasonF, setSeasonF] = useState("all");
   const [sort, setSort] = useState("deadline-asc");
   const [showArch, setShowArch] = useState(false);
+  const [showMore, setShowMore] = useState(false);
+  const [on, setOn] = useState({ phase: "idle", jobs: [], error: "", cached: false, sample: false });
   const zipOk = !!ZIPS[zip];
   const [sKey, sDir] = sort.split("-");
   const dir = sDir === "asc" ? 1 : -1;
+  const city = (prefs.places && prefs.places[0]) || "Sacramento";
+
+  const searchOnline = async () => {
+    const titles = q.split(",").map((x) => x.trim()).filter(Boolean);
+    if (!titles.length) { setOn({ phase: "error", jobs: [], error: "Type a job title in the search box first, like \u201cIT intern\u201d.", cached: false, sample: false }); return; }
+    setOn({ phase: "loading", jobs: [], error: "", cached: false, sample: false });
+    const ctl = new AbortController();
+    const timer = setTimeout(() => ctl.abort(), 25000);
+    try {
+      const r = await fetch("/api/jobs/search", {
+        method: "POST", headers: { "Content-Type": "application/json" }, signal: ctl.signal,
+        body: JSON.stringify({ titles, remote: flags.remote, city: flags.remote ? "" : city, limit: 10 }),
+      });
+      let data = null;
+      try { data = await r.json(); } catch (e) { /* not JSON, so this is not the SacPath server */ }
+      if (!data) throw new Error("no-server");
+      if (!r.ok) { setOn({ phase: "error", jobs: [], error: data.error || "Search failed.", cached: false, sample: false }); return; }
+      setOn({ phase: "done", jobs: data.jobs || [], error: "", cached: !!data.cached, sample: false });
+    } catch (e) {
+      setOn({ phase: "error", jobs: [], error: e.name === "AbortError" ? "The search took too long. Try again." : "no-server", cached: false, sample: false });
+    } finally { clearTimeout(timer); }
+  };
+  const savedIds = new Set(items.map((i) => i.hbId).filter(Boolean));
 
   const shown = useMemo(() => items
     .filter((i) => !!i.archived === showArch)
@@ -681,106 +833,151 @@ function Tracker({ items, setItems, openAdd, profile, goResume, contacts, prefs,
   };
   const arrow = (k) => (sKey === k ? (dir === 1 ? " ▲" : " ▼") : " ↕");
   const Th = ({ k, first, children }) => <th className="sortable" onClick={() => headSort(k, first)}>{children}<span className={"arrow" + (sKey === k ? " on" : "")}>{arrow(k)}</span></th>;
+  const nFilters = [statusF !== "All", win !== "all", lorF !== "any", seasonF !== "all", flags.remote, flags.match, flags.fits, showArch, zipOk, sort !== "deadline-asc"].filter(Boolean).length;
 
   return (
-    <>
-      <div className="top">
-        <div><h2>Your opportunities</h2><p>Everything in one place. Filter and sort by what matters to you.</p></div>
-        <button className="btn gold" onClick={openAdd}>＋ Smart Add</button>
-      </div>
-      <div className="stats">
-        <div className="stat"><div className="n">{active.length}</div><div className="l">Saved</div></div>
-        <div className="stat alert"><div className="n">{week}</div><div className="l">Due in 7 days</div></div>
-        <div className="stat"><div className="n">{active.filter((i) => i.status === "Applying").length}</div><div className="l">In progress</div></div>
-        <div className="stat"><div className="n">{active.filter((i) => i.status === "Submitted").length}</div><div className="l">Submitted</div></div>
-      </div>
+    <div className="withrail">
+      <div style={{ minWidth: 0 }}>
+        <div className="top">
+          <div><h2>Your opportunities</h2><p>Track deadlines and apply.</p></div>
+          <button className="btn gold" onClick={openAdd}>＋ Smart Add</button>
+        </div>
+        <div className="stats">
+          <div className="stat"><div className="n">{active.length}</div><div className="l">Saved</div></div>
+          <div className="stat alert"><div className="n">{week}</div><div className="l">Due this week</div></div>
+          <div className="stat"><div className="n">{active.filter((i) => i.status === "Applying").length}</div><div className="l">Applying</div></div>
+          <div className="stat"><div className="n">{active.filter((i) => i.status === "Submitted").length}</div><div className="l">Submitted</div></div>
+        </div>
 
-      {profile ? (
-        <div className="banner ok">👤 Matching against your profile (<b>{profile.fileName}</b>) · {profile.skills.length} skills · {profile.major} <button className="link" onClick={goResume}>Edit profile</button></div>
-      ) : (
-        <div className="banner">👤 Add your resume to your profile to see how well each opportunity fits you. <button className="link" onClick={goResume}>Go to profile →</button></div>
-      )}
+        <div className="searchrow">
+          <input className="search" aria-label="Search" placeholder="Search your list, or type a job title to find new ones" value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={(e) => e.key === "Enter" && searchOnline()} />
+          <button className="btn gold" disabled={on.phase === "loading"} onClick={searchOnline}>
+            {on.phase === "loading" ? <><span className="spinner" /> Searching…</> : "🔎 Find online"}
+          </button>
+          <button className={"chip" + (showMore || nFilters ? " on" : "")} aria-expanded={showMore} onClick={() => setShowMore(!showMore)}>Filters{nFilters ? " (" + nFilters + ")" : ""} {showMore ? "▴" : "▾"}</button>
+        </div>
+        <div className="filters">
+          {["All", "Internship", "Scholarship", "Fellowship"].map((t) => (
+            <button key={t} className={"chip" + (type === t ? " on" : "")} onClick={() => setType(t)}>{t}</button>
+          ))}
+          {profile
+            ? <span className="org" style={{ marginLeft: "auto" }}>Matching to {profile.fileName} <button className="link" onClick={goResume}>Edit</button></span>
+            : <span className="org" style={{ marginLeft: "auto" }}>No resume yet <button className="link" onClick={goResume}>Add one for match scores</button></span>}
+        </div>
 
-      <div className="filters">
-        <input className="search" placeholder="Search title, company, major…" value={q} onChange={(e) => setQ(e.target.value)} />
-        {["All", "Internship", "Scholarship", "Fellowship"].map((t) => (
-          <button key={t} className={"chip" + (type === t ? " on" : "")} onClick={() => setType(t)}>{t}</button>
-        ))}
-      </div>
-      <div className="filters">
-        <button className={"chip" + (flags.fits ? " on" : "")} onClick={() => setFlags({ ...flags, fits: !flags.fits })}>✅ Fits my preferences</button>
-        <button className={"chip" + (flags.match ? " on" : "")} title={profile ? "" : "Import a resume first"} onClick={() => (profile ? setFlags({ ...flags, match: !flags.match }) : goResume())}>⭐ Good fit for my resume{profile ? "" : " (add resume in Profile)"}</button>
-        <button className={"chip" + (flags.remote ? " on" : "")} onClick={() => setFlags({ ...flags, remote: !flags.remote })}>🏠 Remote</button>
-        <button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({items.filter((i) => i.archived).length})</button>
-        <input className="status zip" inputMode="numeric" maxLength={5} placeholder="📍 ZIP code" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))} />
-        <select className="status" value={radius} onChange={(e) => setRadius(e.target.value)} disabled={!zipOk}>
-          <option value="5">within 5 mi</option><option value="10">within 10 mi</option><option value="25">within 25 mi</option><option value="50">within 50 mi</option>
-        </select>
-      </div>
-      <div className="filters">
-        <select className="status" value={win} onChange={(e) => setWin(e.target.value)}>
-          <option value="all">Any deadline</option><option value="7">Due in 7 days</option><option value="30">Due in 30 days</option>
-        </select>
-        <select className="status" value={seasonF} onChange={(e) => setSeasonF(e.target.value)}>
-          <option value="all">Any season</option>{SEASONS.map((s) => <option key={s}>{s}</option>)}
-        </select>
-        <select className="status" value={lorF} onChange={(e) => setLorF(e.target.value)}>
-          <option value="any">Any # of letters</option><option value="0">No letter needed</option><option value="1">1 letter</option><option value="2">2 or more letters</option>
-        </select>
-        <select className="status" value={statusF} onChange={(e) => setStatusF(e.target.value)}>
-          <option>All</option><option>Saved</option><option>Applying</option><option>Submitted</option>
-        </select>
-        <select className="status sortsel" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
-          {SORT_KEYS.flatMap(([k, label, a, d]) => [
-            <option key={k + "a"} value={k + "-asc"} disabled={k === "match" && !profile}>Sort: {label}, {a}{k === "match" && !profile ? " (import a resume first)" : ""}</option>,
-            <option key={k + "d"} value={k + "-desc"} disabled={k === "match" && !profile}>Sort: {label}, {d}{k === "match" && !profile ? " (import a resume first)" : ""}</option>,
-          ])}
-        </select>
-        <button className="chip" onClick={clear}>Clear all</button>
-      </div>
-      {zipOk && <div className="banner ok">📍 Showing opportunities within {radius} miles of {zip}, plus remote ones.</div>}
-      {zip.length === 5 && !zipOk && <div className="banner">That ZIP isn't in the mock's small list. Try 95823, 95814, 95670, 95616 or 95630.</div>}
-
-      <div className="card">
-        {shown.length === 0 ? <div className="empty">{showArch ? "Nothing archived. Archived opportunities show up here." : items.length === 0 ? "Nothing saved yet. Use Smart Add to add your first opportunity." : "No matches. Try clearing a filter."}</div> : (
-          <table>
-            <thead><tr><Th k="title" first="asc">Opportunity</Th><th>Type</th><th>Where</th><Th k="match" first="desc">Match</Th><Th k="lor" first="asc">Requirements</Th><Th k="deadline" first="asc">Deadline</Th><th>Status</th></tr></thead>
-            <tbody>
-              {shown.map((i) => {
-                const n = daysLeft(i.deadline);
-                return (
-                  <tr key={i.id}>
-                    <td>
-                      <div className="title">{i.title}</div>
-                      <div className="org">{i.org} · via {i.source}</div>
-                      <div className="org">{detailLine(i)}</div>
-                      {i.m && i.m.hits.length > 0 && <div className="why">Matches your: {i.m.hits.join(", ")}</div>}
-                      {i.miss.length > 0 && <div className="why warn">Outside your preferences: {i.miss.join(", ")}</div>}
-                      {contacts.filter((c) => c.links.includes(i.id)).length > 0 && <div className="why" style={{ color: "var(--blue)" }}>👤 You know: {contacts.filter((c) => c.links.includes(i.id)).map((c) => c.name).join(", ")}</div>}
-                      <ApplyLink key={i.id + ":" + (i.link || "")} item={i} onSave={(link) => patch(i.id, { link })} onStart={() => i.status === "Saved" && patch(i.id, { status: "Applying" })} />
-                    </td>
-                    <td><span className={"pill " + i.type}>{i.type}</span></td>
-                    <td><span className="tag">{i.remote ? "Remote" : i.location}</span>{i.dist != null && <div className="org">{i.dist} mi away</div>}</td>
-                    <td>{i.m ? <span className={"mbadge " + matchLevel(i.m.pct)}>{i.m.pct}%</span> : <span className="org">–</span>}</td>
-                    <td>
-                      <span className="tag">✉ {i.lor === 0 ? "No letters" : i.lor + (i.lor === 1 ? " letter" : " letters")}</span>
-                      {i.essay && <span className="tag">📝 Essay</span>}
-                    </td>
-                    <td><span className={"due " + dueClass(n)}>{dueText(n)}</span><div className="org">{fmt(i.deadline)}</div></td>
-                    <td>
-                      <select className="status" value={i.status} onChange={(e) => setStatus(i.id, e.target.value)}>
-                        <option>Saved</option><option>Applying</option><option>Submitted</option>
-                      </select>
-                      <RowActions archived={!!i.archived} onArchive={() => patch(i.id, { archived: true })} onRestore={() => patch(i.id, { archived: false })} onDelete={() => onDelete(i.id)} />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        {showMore && (
+          <div className="more">
+            <div className="filters">
+              <button className={"chip" + (flags.fits ? " on" : "")} onClick={() => setFlags({ ...flags, fits: !flags.fits })}>✅ Fits my preferences</button>
+              <button className={"chip" + (flags.match ? " on" : "")} onClick={() => (profile ? setFlags({ ...flags, match: !flags.match }) : goResume())}>⭐ Good resume fit{profile ? "" : " (add resume)"}</button>
+              <button className={"chip" + (flags.remote ? " on" : "")} onClick={() => setFlags({ ...flags, remote: !flags.remote })}>🏠 Remote</button>
+              <button className={"chip" + (showArch ? " on" : "")} onClick={() => setShowArch(!showArch)}>🗄 Archived ({items.filter((i) => i.archived).length})</button>
+            </div>
+            <div className="filters">
+              <input className="status zip" inputMode="numeric" maxLength={5} placeholder="📍 ZIP code" value={zip} onChange={(e) => setZip(e.target.value.replace(/\D/g, ""))} />
+              <select className="status" value={radius} onChange={(e) => setRadius(e.target.value)} disabled={!zipOk}>
+                <option value="5">within 5 mi</option><option value="10">within 10 mi</option><option value="25">within 25 mi</option><option value="50">within 50 mi</option>
+              </select>
+              <select className="status" value={win} onChange={(e) => setWin(e.target.value)}>
+                <option value="all">Any deadline</option><option value="7">Due in 7 days</option><option value="30">Due in 30 days</option>
+              </select>
+              <select className="status" value={seasonF} onChange={(e) => setSeasonF(e.target.value)}>
+                <option value="all">Any season</option>{SEASONS.map((s) => <option key={s}>{s}</option>)}
+              </select>
+              <select className="status" value={lorF} onChange={(e) => setLorF(e.target.value)}>
+                <option value="any">Any # of letters</option><option value="0">No letter needed</option><option value="1">1 letter</option><option value="2">2 or more letters</option>
+              </select>
+              <select className="status" value={statusF} onChange={(e) => setStatusF(e.target.value)}>
+                <option>All</option><option>Saved</option><option>Applying</option><option>Submitted</option>
+              </select>
+              <select className="status sortsel" value={sort} onChange={(e) => setSort(e.target.value)} aria-label="Sort">
+                {SORT_KEYS.flatMap(([k, label, a, d]) => [
+                  <option key={k + "a"} value={k + "-asc"} disabled={k === "match" && !profile}>Sort: {label}, {a}{k === "match" && !profile ? " (add resume)" : ""}</option>,
+                  <option key={k + "d"} value={k + "-desc"} disabled={k === "match" && !profile}>Sort: {label}, {d}{k === "match" && !profile ? " (add resume)" : ""}</option>,
+                ])}
+              </select>
+              <button className="chip" onClick={clear}>Clear all</button>
+            </div>
+          </div>
         )}
+        {zipOk && <div className="banner ok">Showing {radius} miles around {zip}, plus remote.</div>}
+        {zip.length === 5 && !zipOk && <div className="banner">ZIP not in the demo list. Try 95823, 95814, 95670, 95616 or 95630.</div>}
+
+        {on.phase !== "idle" && on.phase !== "loading" && (
+          <div className="card online">
+            <div className="onhead">
+              <b>Found online</b>
+              <span className="org grow">{on.phase === "done" ? (on.sample ? "Sample results" : on.jobs.length + " from HireBase · near " + (flags.remote ? "anywhere (remote)" : city)) : ""}</span>
+              <button className="btn ghost small" onClick={() => setOn({ phase: "idle", jobs: [], error: "", cached: false, sample: false })}>Close</button>
+            </div>
+            {on.phase === "error" && (
+              <div className="frow"><span style={{ color: "var(--red)" }}>
+                {on.error === "no-server"
+                  ? <>Live search needs the server. Run <b>npm start</b> and open <b>localhost:3000</b>.</>
+                  : on.error}
+              </span>
+              {on.error === "no-server" && <button className="btn ghost small" onClick={() => setOn({ phase: "done", jobs: SAMPLE_JOBS, error: "", cached: false, sample: true })}>Show samples</button>}</div>
+            )}
+            {on.phase === "done" && on.jobs.length === 0 && <div className="frow"><span className="org">Nothing found{flags.remote ? "" : " near " + city}. Try a broader title like \u201cIntern\u201d, or turn on Remote in Filters.</span></div>}
+            {on.phase === "done" && on.jobs.map((j) => (
+              <div className="frow" key={j.id}>
+                <div className="meta">
+                  {hasLink(j.link) ? <a className="title tlink" href={j.link} target="_blank" rel="noopener noreferrer">{j.title} ↗</a> : <div className="title">{j.title}</div>}
+                  <div className="org">{j.org}</div>
+                  <div className="tags">
+                    <span className="tag">{j.remote ? "Remote" : j.location || "See posting"}</span>
+                    <span className="tag">{j.pay != null ? "$" + j.pay + "/hr" : "Pay not listed"}</span>
+                  </div>
+                </div>
+                {savedIds.has(j.id) ? <span className="org">✓ Saved</span> : <button className="btn small" onClick={() => onAddFound(j, q)}>＋ Save</button>}
+              </div>
+            ))}
+            {on.phase === "done" && on.jobs.length > 0 && !on.sample && <div className="frow"><span className="org">No deadline is listed for these, so saved ones get a 30-day reminder.</span></div>}
+          </div>
+        )}
+
+        <div className="card">
+          {shown.length === 0 ? <div className="empty">{showArch ? "Nothing archived yet." : items.length === 0 ? "Nothing saved yet. Try Smart Add or Find online." : q.trim() ? "None of your saved opportunities match \u201c" + q.trim() + "\u201d." : "No matches. Try clearing a filter."}</div> : (
+            <table>
+              <thead><tr><Th k="title" first="asc">Opportunity</Th><Th k="deadline" first="asc">Deadline</Th><Th k="match" first="desc">Match</Th><th>Status</th></tr></thead>
+              <tbody>
+                {shown.map((i) => {
+                  const n = daysLeft(i.deadline);
+                  const people = contacts.filter((c) => c.links.includes(i.id)).length;
+                  return (
+                    <tr key={i.id}>
+                      <td>
+                        {hasLink(i.link)
+                          ? <a className="title tlink" href={i.link} target="_blank" rel="noopener noreferrer" onClick={() => i.status === "Saved" && patch(i.id, { status: "Applying" })}>{i.title} ↗</a>
+                          : <div className="title">{i.title}</div>}
+                        <div className="org">{i.org}{detailLine(i) ? " · " + detailLine(i) : ""}</div>
+                        <div className="tags">
+                          <span className={"pill " + i.type}>{i.type}</span>
+                          <span className="tag">{i.remote ? "Remote" : i.location}{i.dist != null ? " · " + i.dist + " mi" : ""}</span>
+                          {i.lor > 0 && <span className="tag">✉ {i.lor} {i.lor === 1 ? "letter" : "letters"}</span>}
+                          {i.essay && <span className="tag">📝 Essay</span>}
+                          {people > 0 && <span className="tag">👤 {people}</span>}
+                          {i.miss.length > 0 && <span className="tag" style={{ color: "var(--red)" }} title={"Outside your preferences: " + i.miss.join(", ")}>⚠ Off your prefs</span>}
+                        </div>
+                      </td>
+                      <td><span className={"due " + dueClass(n)}>{dueText(n)}</span><div className="org">{fmt(i.deadline)}</div></td>
+                      <td>{i.m ? <span className={"mbadge " + matchLevel(i.m.pct)} title={i.m.hits.length ? "Matches: " + i.m.hits.join(", ") : ""}>{i.m.pct}%</span> : <span className="org">–</span>}</td>
+                      <td>
+                        <select className="status" value={i.status} onChange={(e) => setStatus(i.id, e.target.value)}>
+                          <option>Saved</option><option>Applying</option><option>Submitted</option>
+                        </select>
+                        <RowTools item={i} patch={patch} onStart={() => i.status === "Saved" && patch(i.id, { status: "Applying" })} count={answers.filter((a) => a.oppId === i.id).length} goAnswers={goAnswers} onDelete={onDelete} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
-    </>
+      <SchoolRail school={school} setSchool={setSchool} />
+    </div>
   );
 }
 
@@ -805,12 +1002,12 @@ function ApplyLink({ item, onSave, onStart }) {
     </div>
   );
   return (
-    <div className="rowact">
+    <span className="rowact">
       {hasLink(item.link)
-        ? <a className="btn gold small" href={item.link} target="_blank" rel="noreferrer" onClick={onStart}>Apply ↗</a>
-        : <button className="btn ghost small" onClick={() => setEdit(true)}>＋ Add application link</button>}
-      {hasLink(item.link) && <button className="btn ghost small" onClick={() => { setVal(item.link); setEdit(true); }}>✎ Edit link</button>}
-    </div>
+        ? <a className="btn gold small" href={item.link} target="_blank" rel="noopener noreferrer" onClick={onStart}>Apply ↗</a>
+        : <button className="btn ghost small" onClick={() => setEdit(true)}>＋ Link</button>}
+      {hasLink(item.link) && <button className="btn ghost small" title="Edit link" aria-label="Edit link" onClick={() => { setVal(item.link); setEdit(true); }}>✎</button>}
+    </span>
   );
 }
 
@@ -842,6 +1039,51 @@ const DRAFTS = [
     body: "Hi Prof. Alvarez,\n\nI hope you're doing well! I'm applying for the Software Engineering Fellowship at Hack the Capital, and I'd be grateful if you'd write a letter of recommendation. You supervised my capstone project, so I thought you'd be a great fit to speak to my work.\n\nI can send my resume and the posting. Thank you so much!\n\n[Your name]" },
 ];
 
+function ApplicationDrafts({ items, answers, setAnswers, toast }) {
+  const [open, setOpen] = useState({});
+  const apps = items.filter((i) => !i.archived && i.status !== "Submitted");
+  const upd = (id, v) => setAnswers((as) => as.map((a) => (a.id === id ? { ...a, ...v, updated: iso(TODAY) } : a)));
+  const add = (id) => {
+    setAnswers((as) => [{ id: Date.now(), oppId: id, q: "", a: "", ready: false, updated: iso(TODAY) }, ...as]);
+    setOpen((o) => ({ ...o, [id]: true }));
+  };
+  return (
+    <>
+      <div className="top"><div><h2>Applications</h2><p>Add each question an application asks and keep your answers here until you submit.</p></div></div>
+      {apps.length === 0 ? <div className="card" style={{ marginBottom: 24 }}><div className="empty">No open applications. Save one from the tracker to start.</div></div> : (
+        <div className="list" style={{ marginBottom: 28 }}>
+          {apps.map((i) => {
+            const mine = answers.filter((a) => a.oppId === i.id);
+            const isOpen = !!open[i.id];
+            const n = daysLeft(i.deadline);
+            return (
+              <div className="item" key={i.id}>
+                <div className="ahead" style={{ marginBottom: isOpen ? 12 : 0 }}>
+                  <div style={{ minWidth: 0 }}>
+                    {hasLink(i.link) ? <a className="title tlink" href={i.link} target="_blank" rel="noopener noreferrer">{i.title} ↗</a> : <div className="title">{i.title}</div>}
+                    <div className="org">{i.org} · {i.status} · <span className={"due " + dueClass(n)} style={{ padding: "1px 8px" }}>{dueText(n)}</span></div>
+                  </div>
+                  <div className="rowact" style={{ margin: 0 }}>
+                    <button className="btn ghost small" aria-expanded={isOpen} onClick={() => setOpen({ ...open, [i.id]: !isOpen })}>{mine.length} {mine.length === 1 ? "question" : "questions"} {isOpen ? "▴" : "▾"}</button>
+                    <button className="btn gold small" onClick={() => add(i.id)}>＋ Add question</button>
+                  </div>
+                </div>
+                {isOpen && (
+                  <div className="list">
+                    {mine.length === 0
+                      ? <div className="org">No questions yet. Press Add question.</div>
+                      : mine.map((a) => <AnswerCard key={a.id} a={a} items={items.filter((x) => !x.archived)} upd={upd} onDelete={() => setAnswers((as) => as.filter((x) => x.id !== a.id))} toast={toast} />)}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
 function Drafts({ drafts, setDrafts, toast }) {
   const [view, setView] = useState("draft");
   const [open, setOpen] = useState(null);
@@ -859,7 +1101,7 @@ function Drafts({ drafts, setDrafts, toast }) {
 
   return (
     <>
-      <div className="top"><div><h2>Drafts</h2><p>Messages you've written. Click one to open it and edit.</p></div></div>
+      <div className="top"><div><h2>Messages</h2><p>Messages you've written. Click one to open it and edit.</p></div></div>
       <div className="filters">
         {[["draft", "Drafts", live.filter((d) => d.status === "draft").length], ["sent", "Sent", live.filter((d) => d.status === "sent").length], ["archived", "🗄 Archived", drafts.filter((d) => d.archived).length]].map(([k, l, n]) => (
           <button key={k} className={"chip" + (view === k ? " on" : "")} onClick={() => { setView(k); setOpen(null); }}>{l} ({n})</button>
@@ -1395,90 +1637,82 @@ function Recommenders({ items, people, setPeople, onSaveDraft, toast }) {
   );
 }
 
-/* ---------- find internships (live listings from HireBase through the SacPath server) ---------- */
-const SAMPLE_JOBS = [
-  { id: "sample-1", title: "IT Support Intern", org: "Sample Company (demo data)", link: "https://www.example.com/it-intern", location: "Sacramento, CA", city: "Sacramento", remote: false, jobType: "Internship", pay: 22, posted: null },
-  { id: "sample-2", title: "Junior Data Analyst Intern", org: "Sample Company (demo data)", link: "https://www.example.com/data-intern", location: "Remote", city: null, remote: true, jobType: "Internship", pay: 25, posted: null },
+/* ---------- saved application answers ---------- */
+const ANSWERS = [
+  { id: 1, oppId: 1, q: "Why do you want this internship?", a: "I want hands-on experience protecting real systems. At my campus IT help desk I learned to troubleshoot quickly and explain problems clearly, and my networking classes made me curious about security. This internship would let me apply both.", ready: false, updated: plus(-2) },
+  { id: 2, oppId: 4, q: "Describe a time you showed leadership.", a: "As a MESA study group lead, I organized weekly sessions for ten classmates and made sure everyone had a turn to ask questions.", ready: false, updated: plus(-5) },
+  { id: 3, oppId: null, q: "Tell us about yourself.", a: "I'm a Computer Science student at Cosumnes River College planning to transfer. I like building things that make everyday tasks easier, and I work part-time at our campus help desk.", ready: true, updated: plus(-9) },
 ];
-function FindJobs({ profile, prefs, items, onAdd, goResume }) {
-  const [title, setTitle] = useState("Intern");
-  const [skills, setSkills] = useState(profile ? profile.skills.filter((s) => SKILL_MAP[s] && !["leadership", "teamwork", "community", "writing"].includes(s)).slice(0, 3).join(", ") : "");
-  const [city, setCity] = useState((prefs.places && prefs.places[0]) || "Sacramento");
-  const [remote, setRemote] = useState(false);
-  const [state, setState] = useState({ phase: "idle", jobs: [], error: "", cached: false, sample: false });
-  const saved = new Set(items.map((i) => i.hbId).filter(Boolean));
-  const split = (v) => v.split(",").map((x) => x.trim()).filter(Boolean);
+const wordCount = (t) => (t.trim() ? t.trim().split(/\s+/).length : 0);
 
-  const search = async () => {
-    setState({ phase: "loading", jobs: [], error: "", cached: false, sample: false });
-    try {
-      const r = await fetch("/api/jobs/search", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ titles: split(title), keywords: split(skills), remote, city: remote ? "" : city.trim(), limit: 15 }),
-      });
-      let data = null;
-      try { data = await r.json(); } catch (e) { /* not JSON, so we are not talking to the SacPath server */ }
-      if (!data) throw new Error("no-server");
-      if (!r.ok) { setState({ phase: "error", jobs: [], error: data.error || "Search failed (" + r.status + ").", cached: false, sample: false }); return; }
-      setState({ phase: "done", jobs: data.jobs || [], error: "", cached: !!data.cached, sample: false });
-    } catch (e) {
-      setState({ phase: "error", jobs: [], error: "no-server", cached: false, sample: false });
-    }
+function AnswerCard({ a, items, upd, onDelete, toast }) {
+  const [ask, setAsk] = useState(false);
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(a.a); toast("Copied. Paste it into the application."); }
+    catch (e) { toast("Couldn't copy. Select the text and copy it."); }
   };
+  return (
+    <div className={"acard" + (a.ready ? " ready" : "")}>
+      <div className="ahead">
+        <select className="status" aria-label="Opportunity" value={a.oppId == null ? "general" : String(a.oppId)} onChange={(e) => upd(a.id, { oppId: e.target.value === "general" ? null : +e.target.value })}>
+          <option value="general">General (any application)</option>
+          {items.map((i) => <option key={i.id} value={i.id}>{i.title}, {i.org}</option>)}
+          {a.oppId != null && !items.some((i) => i.id === a.oppId) && <option value={a.oppId}>(archived or removed)</option>}
+        </select>
+        <label className="ready-lbl"><input type="checkbox" checked={a.ready} onChange={(e) => upd(a.id, { ready: e.target.checked })} /> Ready to submit</label>
+      </div>
+      <input className="field qinput" placeholder="Question (for example, Why do you want this role?)" value={a.q} onChange={(e) => upd(a.id, { q: e.target.value })} />
+      <textarea style={{ minHeight: 120 }} placeholder="Write your answer here. You can edit it any time before you submit." value={a.a} onChange={(e) => upd(a.id, { a: e.target.value })} />
+      <div className="afoot">
+        <span className="org grow">{wordCount(a.a)} words · edited {fmt(a.updated)}</span>
+        <button className="btn ghost small" onClick={copy} disabled={!a.a.trim()}>Copy</button>
+        {ask
+          ? <><button className="btn danger small" onClick={onDelete}>Delete</button><button className="btn ghost small" onClick={() => setAsk(false)}>Keep</button></>
+          : <button className="btn ghost small del" onClick={() => setAsk(true)}>🗑</button>}
+      </div>
+    </div>
+  );
+}
 
+function Answers({ answers, setAnswers, items, focus, toast }) {
+  const [only, setOnly] = useState("all");
+  useEffect(() => { if (focus != null) setOnly(String(focus.id)); }, [focus]);
+  const live = items.filter((i) => !i.archived);
+  const list = answers.filter((a) => only === "all" || (only === "general" ? a.oppId == null : String(a.oppId) === only));
+  const upd = (id, v) => setAnswers((as) => as.map((a) => (a.id === id ? { ...a, ...v, updated: iso(TODAY) } : a)));
+  const add = () => setAnswers((as) => [{ id: Date.now(), oppId: only === "all" || only === "general" ? null : +only, q: "", a: "", ready: false, updated: iso(TODAY) }, ...as]);
   return (
     <>
-      <div className="top"><div><h2>Find internships</h2><p>Live listings from HireBase. Add the ones you like to your tracker.</p></div></div>
-      {!profile && <div className="banner">👤 Add your resume in your profile and we will fill in your skills for you. <button className="link" onClick={goResume}>Go to profile →</button></div>}
-      <div className="card" style={{ padding: 16, marginBottom: 14 }}>
-        <div className="grid2">
-          <div><label className="f">Job title</label><input className="field" placeholder="e.g. IT Intern, Data Analyst Intern" value={title} onChange={(e) => setTitle(e.target.value)} /></div>
-          <div><label className="f">Skills (optional)</label><input className="field" placeholder="python, sql, networking" value={skills} onChange={(e) => setSkills(e.target.value)} /></div>
-          <div><label className="f">City</label><input className="field" disabled={remote} value={city} onChange={(e) => setCity(e.target.value)} /></div>
-          <div style={{ display: "flex", alignItems: "flex-end", gap: 10 }}>
-            <button className={"chip" + (remote ? " on" : "")} onClick={() => setRemote(!remote)}>🏠 Remote only</button>
-            <button className="btn gold" disabled={state.phase === "loading" || !title.trim()} onClick={search}>
-              {state.phase === "loading" ? <><span className="spinner" /> Searching…</> : "🔎 Search"}
-            </button>
-          </div>
-        </div>
+      <div className="top">
+        <div><h2>Application answers</h2><p>Keep your responses here and edit them before you submit.</p></div>
+        <button className="btn gold" onClick={add}>＋ New answer</button>
       </div>
-
-      {state.phase === "error" && (
-        <div className="banner" style={{ background: "var(--red-soft)", color: "var(--red)" }}>
-          {state.error === "no-server" ? (
-            <>Can't reach the SacPath server, so live search is off. Run <b>npm start</b> and open <b>http://localhost:3000</b> (opening the file directly or a preview won't work). <button className="link" onClick={() => setState({ phase: "done", jobs: SAMPLE_JOBS, error: "", cached: false, sample: true })}>Show sample results instead</button></>
-          ) : state.error}
-        </div>
-      )}
-      {state.phase === "done" && state.sample && <div className="banner">These are made-up sample listings so you can try the page without the server. Real search needs the server running.</div>}
-      {state.phase === "done" && !state.sample && <div className="banner ok">{state.jobs.length} listings from HireBase{state.cached ? " (saved from a search a few minutes ago)" : ""}. HireBase doesn't list application deadlines, so we set a check-in date 30 days out. You can change the status any time.</div>}
-
-      {state.phase === "done" && (
-        <div className="card">
-          {state.jobs.length === 0 ? <div className="empty">No listings matched. Try a broader title like "Intern", fewer skills, or a nearby city.</div> : (
-            <table>
-              <thead><tr><th>Opportunity</th><th>Where</th><th>Pay</th><th></th></tr></thead>
-              <tbody>
-                {state.jobs.map((j) => (
-                  <tr key={j.id}>
-                    <td>
-                      <div className="title">{j.title}</div>
-                      <div className="org">{j.org}{j.jobType ? " · " + j.jobType : ""}{j.posted ? " · posted " + String(j.posted).slice(0, 10) : ""}</div>
-                      {hasLink(j.link) && <a className="link" href={j.link} target="_blank" rel="noopener noreferrer">View posting ↗</a>}
-                    </td>
-                    <td><span className="tag">{j.remote ? "Remote" : j.location || "See posting"}</span></td>
-                    <td>{j.pay != null ? "$" + j.pay + "/hr" : <span className="org">Not listed</span>}</td>
-                    <td>{saved.has(j.id) ? <span className="org">✓ In tracker</span> : <button className="btn small" onClick={() => onAdd(j, skills)}>＋ Add to tracker</button>}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      )}
-      {state.phase === "idle" && <div className="card"><div className="empty">Pick a title and city, then press Search.</div></div>}
+      <div className="filters">
+        <select className="status" value={only} onChange={(e) => setOnly(e.target.value)} aria-label="Show answers for">
+          <option value="all">All answers ({answers.length})</option>
+          <option value="general">General</option>
+          {live.map((i) => <option key={i.id} value={i.id}>{i.title}, {i.org}</option>)}
+        </select>
+      </div>
+      <div className="list">
+        {list.length === 0
+          ? <div className="card"><div className="empty">No answers here yet. Add one and come back to edit it any time.</div></div>
+          : list.map((a) => <AnswerCard key={a.id} a={a} items={live} upd={upd} onDelete={() => setAnswers((as) => as.filter((x) => x.id !== a.id))} toast={toast} />)}
+      </div>
     </>
+  );
+}
+
+function SubTabs({ label, value, onChange, tabs }) {
+  return (
+    <div>
+      <div className="eyebrow">{label}</div>
+      <div className="seg" role="tablist">
+        {tabs.map(([k, l, n]) => (
+          <button key={k} role="tab" aria-selected={value === k} className={value === k ? "on" : ""} onClick={() => onChange(k)}>{l}{n != null && <span className="n">{n}</span>}</button>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -1494,6 +1728,13 @@ function App() {
   const [drafts, setDrafts] = useState(DRAFTS);
   const upsertDraft = (d) => setDrafts((ds) => (ds.some((x) => x.id === d.id) ? ds.map((x) => (x.id === d.id ? { ...x, ...d, updated: iso(TODAY) } : x)) : [{ created: iso(TODAY), updated: iso(TODAY), ...d }, ...ds]));
   const [prefs, setPrefs] = useState(DEMO_PREFS);
+  const [answers, setAnswers] = useState(ANSWERS);
+  const [focus, setFocus] = useState(null);
+  const [cSub, setCSub] = useState("drafts");
+  const [nSub, setNSub] = useState("affiliates");
+  const [school, setSchoolState] = useState(() => { try { return JSON.parse(localStorage.getItem("sacpath.school")) || { id: "crc", custom: "" }; } catch (e) { return { id: "crc", custom: "" }; } });
+  const setSchool = (v) => { setSchoolState(v); try { localStorage.setItem("sacpath.school", JSON.stringify(v)); } catch (e) { /* storage can be blocked; the choice just won't be remembered */ } };
+  const goAnswers = (id) => { setFocus({ id, n: Date.now() }); setCSub("answers"); setTab("currently"); };
   const [msg, setMsg] = useState("");
   const toast = (m) => { setMsg(m); setTimeout(() => setMsg(""), 2600); };
   const save = (d, saveCo) => {
@@ -1511,30 +1752,49 @@ function App() {
   const deleteOpp = (id) => {
     setItems((its) => its.filter((i) => i.id !== id));
     setContacts((cs) => cs.map((c) => ({ ...c, links: c.links.filter((l) => l !== id) })));
+    setAnswers((as) => as.map((a) => (a.oppId === id ? { ...a, oppId: null } : a)));
     toast("🗑️ Opportunity deleted.");
   };
-  const NAV = [["tracker", "📋", "Tracker", items.filter((i) => !i.archived).length], ["find", "🔎", "Find internships", null], ["affiliates", "🤝", "Affiliates", contacts.filter((c) => !c.archived).length], ["companies", "🏢", "Companies", companies.filter((c) => !c.archived).length], ["resume", "👤", "Profile", null], ["reminders", "⏰", "Reminders", null], ["recs", "✉️", "Recommenders", recs.filter((r) => !r.archived).length], ["drafts", "📝", "Drafts", drafts.filter((d) => !d.archived && d.status === "draft").length]];
+  const pendingDrafts = drafts.filter((d) => !d.archived && d.status === "draft").length;
+  const openAnswers = answers.filter((x) => !x.ready).length;
+  const netCount = contacts.filter((c) => !c.archived).length + companies.filter((c) => !c.archived).length + recs.filter((r) => !r.archived).length;
+  const NAV = [["resume", "👤", "Profile", null], ["tracker", "📋", "Tracker", items.filter((i) => !i.archived).length], ["currently", "✍️", "Currently", pendingDrafts + openAnswers], ["network", "🤝", "Network", netCount], ["reminders", "⏰", "Reminders", null]];
 
   return (
     <div className="app">
       <aside className="side">
-        <div className="brand"><div className="brand-mark">S</div><h1>SacPath</h1></div>
+        <div className="brand">{LOGO}<h1>SacPath</h1></div>
         {NAV.map(([k, ic, l, c]) => (
           <button key={k} className={"nav" + (tab === k ? " on" : "")} onClick={() => setTab(k)}>
             <span>{ic}</span>{l}{c != null && <span className="count">{c}</span>}
           </button>
         ))}
-        <div className="side-foot">No account or login needed. CRC Hacks 2026 prototype. Find internships uses live HireBase listings when the server is running; Smart Add is still simulated.</div>
+        <div className="side-foot">No login needed. CRC Hacks 2026 prototype.</div>
       </aside>
       <main className="main">
-        {tab === "tracker" && <Tracker items={items} setItems={setItems} openAdd={() => setAdding(true)} profile={profile} goResume={() => setTab("resume")} contacts={contacts} prefs={prefs} onDelete={deleteOpp} />}
-        {tab === "find" && <FindJobs profile={profile} prefs={prefs} items={items} onAdd={addFound} goResume={() => setTab("resume")} />}
-        {tab === "affiliates" && <Affiliates items={items} contacts={contacts} setContacts={setContacts} companies={companies} setCompanies={setCompanies} docs={docs} profile={profile} drafts={drafts} onSaveDraft={upsertDraft} toast={toast} />}
-        {tab === "companies" && <Companies items={items} contacts={contacts} setContacts={setContacts} companies={companies} setCompanies={setCompanies} toast={toast} />}
+        {tab === "tracker" && <Tracker items={items} setItems={setItems} openAdd={() => setAdding(true)} profile={profile} goResume={() => setTab("resume")} contacts={contacts} prefs={prefs} onDelete={deleteOpp} onAddFound={addFound} answers={answers} goAnswers={goAnswers} school={school} setSchool={setSchool} />}
+        {tab === "currently" && (
+          <>
+            <SubTabs label="Currently" value={cSub} onChange={setCSub} tabs={[["drafts", "Drafts", pendingDrafts], ["answers", "Answers", openAnswers]]} />
+            {cSub === "drafts" && (
+              <>
+                <ApplicationDrafts items={items} answers={answers} setAnswers={setAnswers} toast={toast} />
+                <Drafts drafts={drafts} setDrafts={setDrafts} toast={toast} />
+              </>
+            )}
+            {cSub === "answers" && <Answers answers={answers} setAnswers={setAnswers} items={items} focus={focus} toast={toast} />}
+          </>
+        )}
+        {tab === "network" && (
+          <>
+            <SubTabs label="Network" value={nSub} onChange={setNSub} tabs={[["affiliates", "Affiliates", contacts.filter((c) => !c.archived).length], ["companies", "Companies", companies.filter((c) => !c.archived).length], ["recs", "Recommenders", recs.filter((r) => !r.archived).length]]} />
+            {nSub === "affiliates" && <Affiliates items={items} contacts={contacts} setContacts={setContacts} companies={companies} setCompanies={setCompanies} docs={docs} profile={profile} drafts={drafts} onSaveDraft={upsertDraft} toast={toast} />}
+            {nSub === "companies" && <Companies items={items} contacts={contacts} setContacts={setContacts} companies={companies} setCompanies={setCompanies} toast={toast} />}
+            {nSub === "recs" && <Recommenders items={items} people={recs} setPeople={setRecs} onSaveDraft={upsertDraft} toast={toast} />}
+          </>
+        )}
         {tab === "resume" && <ResumeTab profile={profile} setProfile={setProfile} toast={toast} goTracker={() => setTab("tracker")} prefs={prefs} setPrefs={setPrefs} items={items.filter((i) => !i.archived)} docs={docs} setDocs={setDocs} />}
         {tab === "reminders" && <Reminders items={items} toast={toast} />}
-        {tab === "recs" && <Recommenders items={items} people={recs} setPeople={setRecs} onSaveDraft={upsertDraft} toast={toast} />}
-        {tab === "drafts" && <Drafts drafts={drafts} setDrafts={setDrafts} toast={toast} />}
       </main>
       {adding && <SmartAdd onClose={() => setAdding(false)} onSave={save} companies={companies} />}
       <Toast msg={msg} />
